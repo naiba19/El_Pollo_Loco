@@ -2,6 +2,7 @@ class World {
     character = new Character();
     level = level1;
     enemies = level1.enemies;
+    endboss = level1.endboss;
     canvas;
     ctx;
     keyboard;
