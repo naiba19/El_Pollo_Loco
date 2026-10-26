@@ -13,43 +13,65 @@ class MovableObject {
 
     applyGravity() {
         setInterval(() => {
-            if (this.isAboveGround()) {
+            if (this.isAboveGround() || this.speedY > 0) {
                 this.y -= this.speedY;
                 this.speedY -= this.acceleration;
             }
         }, 1000 / 25);
     }
 
-isAboveGround(){
+    isAboveGround() {
         return this.y < 180;
     }
 
-loadImage(path) {
-    this.img = new Image();
-    this.img.src = path;
+    loadImage(path) {
+        this.img = new Image();
+        this.img.src = path;
+    }
+
+    draw(ctx) {
+        ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+    }
+
+    drawFrame(ctx) {
+        if (this instanceof Character || this instanceof Chicken) {
+            ctx.beginPath();
+            ctx.lineWidth = '5';
+            ctx.strokeStyle = 'blue';
+            ctx.rect(this.x, this.y, this.width, this.height);
+            ctx.stroke();
+        }
 }
 
+/**
+ * @param {Array} arr - Array of image paths to load into the image cache.
+ */
 loadImages(arr) {
     arr.forEach((path) => {
         let img = new Image();
-            img.src = path;
-            this.imageCache[path] = img;
-        });
-    }
-    playAnimation(images) {
-        let i = this.currentImage % images.length;
-        let path = images[i];
-        this.img = this.imageCache[path];
-        this.currentImage++;
-    }
+        img.src = path;
+        this.imageCache[path] = img;
+    });
+}
 
-    MoveRight() {
-        console.log('Moving right');
-    }
+playAnimation(images) {
+    let i = this.currentImage % images.length;
+    let path = images[i];
+    this.img = this.imageCache[path];
+    this.currentImage++;
+}
 
-    moveLeft() {
-        setInterval(() => {
-            this.x -= this.speed;
-        }, 1000 / 60);
+moveRight() {
+    this.x += this.speed;
+}
+
+moveLeft() {
+    this.x -= this.speed;
+}
+
+jump() {
+    if (!this.isAboveGround()) {
+        this.speedY = 30;
     }
 }
+    }
