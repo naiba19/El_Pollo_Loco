@@ -24,6 +24,17 @@ class Character extends MovableObject {
         "images/2_character_pepe/3_jump/J-39.png",
     ];
 
+
+    IMAGES_DEAD = [
+        "images/2_character_pepe/5_dead/D-51.png",
+        "images/2_character_pepe/5_dead/D-52.png",
+        "images/2_character_pepe/5_dead/D-53.png",
+        "images/2_character_pepe/5_dead/D-54.png",
+        "images/2_character_pepe/5_dead/D-55.png",
+        "images/2_character_pepe/5_dead/D-56.png",
+        "images/2_character_pepe/5_dead/D-57.png"
+    ];
+
     world;
     walking_sound = new Audio("audio/running.mp3");
 
@@ -31,6 +42,7 @@ class Character extends MovableObject {
         super().loadImage("images/2_character_pepe/2_walk/W-21.png");
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_JUMPING);
+        this.loadImages(this.IMAGES_DEAD);
         this.applyGravity();
         this.animate();
     }
@@ -39,8 +51,8 @@ class Character extends MovableObject {
         setInterval(() => {
             this.walking_sound.pause();
             if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
-                this.MoveRight();
-                  this.otherDirection = false;
+                this.moveRight();
+                this.otherDirection = false;
                 this.walking_sound.play();
             }
 
@@ -58,17 +70,19 @@ class Character extends MovableObject {
         }, 1000 / 60);
 
         setInterval(() => {
-
-            if (this.isAboveGround()) {
+            if (this.isDead()) {
+                this.playAnimation(this.IMAGES_DEAD);
+            } else if (this.isAboveGround()) {
                 this.playAnimation(this.IMAGES_JUMPING);
             } else {
-                if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-                    this.playAnimation(this.IMAGES_WALKING);
-                }
+
+            if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
+                this.playAnimation(this.IMAGES_WALKING);
             }
-        }, 50);
-    }
-    jump() {
-        this.speedY = 30;
-    }
+        }
+    }, 50);
+}
+jump() {
+    this.speedY = 30;
+}
 }
