@@ -50,3 +50,19 @@ window.addEventListener("keydown", (e) => {
             keyboard.D = false;
         }
     });
+
+
+    function checkOrientation() {
+    if (window.matchMedia("(orientation: landscape)").matches) {
+        if (window.innerHeight < 480) {
+            let newHeight = window.innerHeight;
+            document.getElementById('canvas').style.height = `${newHeight}px`;
+        }
+    }
+    else {
+        document.getElementById('canvas').style.height = `100%`;
+    }
+}
+window.addEventListener("resize", checkOrientation);
+window.addEventListener("load", checkOrientation);
+window.addEventListener("orientationchange", checkOrientation);

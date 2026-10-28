@@ -4,32 +4,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
     <title>El Pollo Loco</title>
+
+     <link rel="stylesheet" href="style.css">
+
     <script src="models/drawable-object.class.js"></script>
     <script src="models/movable-object.class.js"></script>
+    <script src="models/world.class.js"></script>
     <script src="models/character.class.js"></script>
     <script src="models/chicken.class.js"></script>
     <script src="models/cloud.class.js"></script>
+
     <script src="models/status-bar.class.js"></script>
-    <script src="models/world.class.js"></script>
+
+
+    // health, bottle, coin hamisina ayrica yarat
+    <script src="models/health-bar.class.js"></script>
+    <script src="models/bottle-bar.class.js"></script>
+    <script src="models/coin-bar.class.js"></script>
+
+
+    //coin.class.js ayrica yarat
+    <script src="models/coin.class.js"></script>
+
+    <script src="models/throwable-object.class.js"></script>
+
+    // bottle-1, bottle-2 gibi ayrica yarat
+    <script src="models/bottle-1.class.js"></script>
+    <script src="models/bottle-2.class.js"></script>
+    
     <script src="models/background-object.class.js"></script>
     <script src="models/keyboard.class.js"></script>
+     <script src="models/endboss.class.js"></script>
+
+//small chicken class yarat
+    <script src="models/small-chicken.class.js"></script>
+
+
     <script src="models/level.class.js"></script>
-    <script src="models/throwable-object.class.js"></script>
-    <script src="models/endboss.class.js"></script>
     <script src="levels/level1.js"></script>
-    <script src="models/collidable-object.js"></script>
     <script src="js/game.js"></script>
+    <script src="js/fullscreen.js"></script>
 
 </head>
 
+<style>
+    @font-face {
+        font-family: 'zabars';
+        src: url('fonts/zabars.ttf') format('truetype');
+    }
+
+    body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        background-image: url(images/desert.png);
+        background-position: center;
+        font-family: 'zabars', Arial, Helvetica, sans-serif;
+    }
+
+    h1 {
+        font-size: 64px;
+        letter-spacing: 3px;
+        font-family: 'zabars', Arial, Helvetica, sans-serif;
+        text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+    }
+
+    canvas {
+        border: 1px solid black;
+    }
+</style>
+
 <body onload="init()">
+     <h1>El Pollo Loco</h1>
+    <button id="fullscreen" onclick="fullscreen()">Fullscreen</button>
+    <canvas id="canvas" width="720" height="480"></canvas>
 
-    <h1>El Pollo Loco</h1>
-
-    <canvas id="canvas" width="720" height="480">
-    </canvas>
 </body>
 
 </html>
