@@ -18,6 +18,30 @@ function startGame() {
     world = new World(canvas, keyboard);
 }
 
+function bindTouchButton(buttonId, key) {
+    let btn = document.getElementById(buttonId);
+    btn.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        keyboard[key] = true;
+    }, { passive: false });
+    btn.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        keyboard[key] = false;
+    });
+    btn.addEventListener('touchcancel', () => {
+        keyboard[key] = false;
+    });
+}
+
+function initTouchControls() {
+    bindTouchButton('btn-left', 'LEFT');
+    bindTouchButton('btn-right', 'RIGHT');
+    bindTouchButton('btn-jump', 'SPACE');
+    bindTouchButton('btn-throw', 'D');
+}
+
+document.addEventListener('DOMContentLoaded', initTouchControls);
+
 
 window.addEventListener("keydown", (e) => {
     if (e.key == "ArrowRight") {

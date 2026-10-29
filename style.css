@@ -34,6 +34,33 @@ canvas {
     margin: 8px;
 }
 
+#touch-controls {
+    display: none;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 12px;
+}
+
+.touch-btn {
+    width: 64px;
+    height: 64px;
+    font-size: 28px;
+    border-radius: 50%;
+    border: 2px solid #000;
+    background-color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+}
+
+@media only screen and (pointer: coarse), only screen and (max-width: 720px) {
+    #touch-controls {
+        display: flex;
+    }
+}
+
 @media only screen and (max-width: 720px) {
     canvas {
         width: 100%;
