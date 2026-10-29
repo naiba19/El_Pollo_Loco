@@ -34,8 +34,8 @@ class MovableObject extends DrawableObject {
             this.y < mo.y + mo.height;
     }
 
-    hit() {
-        this.energy -= 5;
+    hit(damage = 5) {
+        this.energy -= damage;
         if (this.energy <= 0) {
             this.energy = 0;
         } else {
@@ -57,6 +57,16 @@ isDead() {
 playAnimation(images) {
     let i = this.currentImage % images.length;
     let path = images[i];
+    this.img = this.imageCache[path];
+    this.currentImage++;
+}
+
+playAnimationOnce(images) {
+    if (this.currentImage >= images.length) {
+        this.img = this.imageCache[images[images.length - 1]];
+        return;
+    }
+    let path = images[this.currentImage];
     this.img = this.imageCache[path];
     this.currentImage++;
 }

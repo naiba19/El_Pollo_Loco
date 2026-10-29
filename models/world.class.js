@@ -64,13 +64,11 @@ class World {
 
     checkThrowableObjectsCollisions() {
         this.throwableObjects.forEach((bottle, bottleIndex) => {
-            this.level.enemies.forEach(enemy => {
-                if (!enemy.isDead() && bottle.isColliding(enemy)) {
-                    enemy.hit();
-                    this.throwableObjects.splice(bottleIndex, 1);
-                }
-            });
-            if (bottle.y > 400) {
+            let hitEnemy = this.level.enemies.find(enemy => !enemy.isDead() && bottle.isColliding(enemy));
+            if (hitEnemy) {
+                hitEnemy.hit(20);
+                this.throwableObjects.splice(bottleIndex, 1);
+            } else if (bottle.y > 400) {
                 this.throwableObjects.splice(bottleIndex, 1);
             }
         });
@@ -100,13 +98,13 @@ class World {
         if (this.character.isDead()) {
             this.gameOver = true;
             this.gameOverImage = new Image();
-            this.gameOverImage.src = "images/9_intro_outro_screens/game_over/game over.png";
+            this.gameOverImage.src = "images/9_intro_outro_screens/game_over/you lost.png";
         }
         let endboss = this.level.enemies.find(e => e instanceof Endboss);
         if (endboss && endboss.isDead()) {
             this.gameOver = true;
             this.gameOverImage = new Image();
-            this.gameOverImage.src = "images/9_intro_outro_screens/game_over/you lost.png";
+            this.gameOverImage.src = "images/You won, you lost/You won A.png";
         }
     }
 
@@ -117,6 +115,10 @@ class World {
         this.character.energy = 100;
         this.character.x = 120;
         this.character.y = 80;
+        this.character.speedY = 0;
+        this.character.currentImage = 0;
+        this.character.deathAnimationStarted = false;
+        this.character.otherDirection = false;
         this.character.lastHit = 0;
         this.collectedBottles = 0;
         this.collectedCoins = 0;
@@ -125,7 +127,7 @@ class World {
         this.bottleBar.setPercentage(0);
         this.coinBar.setPercentage(0);
         this.camera_x = 0;
-        this.level = level1;
+        this.level = createLevel1();
         this.character.world = this;
     }
 

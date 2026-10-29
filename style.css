@@ -9,6 +9,31 @@ canvas {
     display: block;
 }
 
+#canvas-container {
+    position: relative;
+    width: 720px;
+    max-width: 100%;
+}
+
+#start-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('images/9_intro_outro_screens/start/startscreen_1.png');
+    background-size: 100% 100%;
+    background-position: center;
+}
+
+#start {
+    cursor: pointer;
+    font-family: 'zabars', Arial, Helvetica, sans-serif;
+    font-size: 24px;
+    padding: 8px 32px;
+    margin: 8px;
+}
+
 @media only screen and (max-width: 720px) {
     canvas {
         width: 100%;

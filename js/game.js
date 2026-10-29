@@ -4,6 +4,17 @@ let keyboard = new Keyboard();
 
 function init() {
     canvas = document.getElementById("canvas");
+}
+
+function startGame() {
+    if (world) {
+        return;
+    }
+    if (!canvas) {
+        init();
+    }
+    document.getElementById('start-screen').style.display = 'none';
+    document.getElementById('start').style.display = 'none';
     world = new World(canvas, keyboard);
 }
 

@@ -64,11 +64,15 @@
     </style>
 </head>
 
-<body onload="init()">
+<body>
     <h1>El Pollo Loco</h1>
     <button id="fullscreen" onclick="fullscreen()">Fullscreen</button>
+    <button id="start" onclick="startGame()">Start</button>
     <button id="restart" onclick="world.restart()" style="display:none;">Restart</button>
-    <canvas id="canvas" width="720" height="480"></canvas>
+    <div id="canvas-container">
+        <canvas id="canvas" width="720" height="480"></canvas>
+        <div id="start-screen"></div>
+    </div>
 </body>
 
 </html>
