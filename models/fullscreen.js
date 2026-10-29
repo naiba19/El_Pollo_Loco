@@ -1,7 +1,7 @@
 
 function fullscreen() {
-    let fullscreen = document.getElementById('fullscreen');
-    enterFullscreen(fullscreen);
+    let canvas = document.getElementById('canvas');
+    enterFullscreen(canvas);
 }
 
 function enterFullscreen(element) {

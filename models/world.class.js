@@ -6,7 +6,15 @@ class World {
     keyboard;
     camera_x = 0;
     statusBar = new StatusBar();
-    throwableObjects = [];  
+    bottleBar = new BottleBar();
+    coinBar = new CoinBar();
+    throwableObjects = [];
+    collectedBottles = 0;
+    collectedCoins = 0;
+    lastThrowTime = 0;
+    throwCooldown = 500;
+    gameOver = false;
+    gameOverImage = null;
 
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext("2d");
@@ -14,7 +22,7 @@ class World {
         this.keyboard = keyboard;
         this.draw();
         this.setWorld();
-       this.run(); 
+        this.run();
     }
 
     setWorld() {
@@ -23,39 +31,102 @@ class World {
 
     run() {
         setInterval(() => {
-            this.checkCollisions();
-            this.checkThrowableObjects();
+            if (!this.gameOver) {
+                this.checkCollisions();
+                this.checkThrowableObjects();
+                this.checkThrowableObjectsCollisions();
+                this.checkCoinCollisions();
+                this.checkBottleCollisions();
+                this.checkGameOver();
+            }
         }, 200);
     }
-checkThrowableObjects() {
-    if (this.keyboard.D) {
-        let bottle = new ThrowableObject(this.character.x + 100, this.character.y + 100);
-        this.throwableObjects.push(bottle);
+
+    checkThrowableObjects() {
+        let now = new Date().getTime();
+        if (this.keyboard.D && this.collectedBottles > 0 && now - this.lastThrowTime > this.throwCooldown) {
+            this.lastThrowTime = now;
+            this.collectedBottles--;
+            this.bottleBar.setPercentage(this.collectedBottles * 20);
+            let bottle = new ThrowableObject(this.character.x + 100, this.character.y + 100);
+            this.throwableObjects.push(bottle);
+        }
     }
-}   
 
-
-
-    
     checkCollisions() {
-            this.level.enemies.forEach(enemy => {
-                if (this.character.isColliding(enemy)) {
-                    this.character.hit();
-                    this.statusBar.setPercentage(this.character.energy);
-                }
-            });
+        this.level.enemies.forEach(enemy => {
+            if (!enemy.isDead() && this.character.isColliding(enemy)) {
+                this.character.hit();
+                this.statusBar.setPercentage(this.character.energy);
+            }
+        });
     }
 
     checkThrowableObjectsCollisions() {
-        setInterval(() => {
-            this.throwableObjects.forEach(obj => {
-                this.level.enemies.forEach(enemy => {
-                    if (obj.isColliding(enemy)) {
-                        enemy.hit();
-                    }
-                });
+        this.throwableObjects.forEach((bottle, bottleIndex) => {
+            this.level.enemies.forEach(enemy => {
+                if (!enemy.isDead() && bottle.isColliding(enemy)) {
+                    enemy.hit();
+                    this.throwableObjects.splice(bottleIndex, 1);
+                }
             });
-        }, 200);
+            if (bottle.y > 400) {
+                this.throwableObjects.splice(bottleIndex, 1);
+            }
+        });
+    }
+
+    checkCoinCollisions() {
+        this.level.coins.forEach((coin, index) => {
+            if (this.character.isColliding(coin)) {
+                this.level.coins.splice(index, 1);
+                this.collectedCoins++;
+                this.coinBar.setPercentage(this.collectedCoins * 20);
+            }
+        });
+    }
+
+    checkBottleCollisions() {
+        this.level.bottles.forEach((bottle, index) => {
+            if (this.character.isColliding(bottle)) {
+                this.level.bottles.splice(index, 1);
+                this.collectedBottles++;
+                this.bottleBar.setPercentage(this.collectedBottles * 20);
+            }
+        });
+    }
+
+    checkGameOver() {
+        if (this.character.isDead()) {
+            this.gameOver = true;
+            this.gameOverImage = new Image();
+            this.gameOverImage.src = "images/9_intro_outro_screens/game_over/game over.png";
+        }
+        let endboss = this.level.enemies.find(e => e instanceof Endboss);
+        if (endboss && endboss.isDead()) {
+            this.gameOver = true;
+            this.gameOverImage = new Image();
+            this.gameOverImage.src = "images/9_intro_outro_screens/game_over/you lost.png";
+        }
+    }
+
+    restart() {
+        document.getElementById('restart').style.display = 'none';
+        this.gameOver = false;
+        this.gameOverImage = null;
+        this.character.energy = 100;
+        this.character.x = 120;
+        this.character.y = 80;
+        this.character.lastHit = 0;
+        this.collectedBottles = 0;
+        this.collectedCoins = 0;
+        this.throwableObjects = [];
+        this.statusBar.setPercentage(100);
+        this.bottleBar.setPercentage(0);
+        this.coinBar.setPercentage(0);
+        this.camera_x = 0;
+        this.level = level1;
+        this.character.world = this;
     }
 
     draw() {
@@ -66,14 +137,23 @@ checkThrowableObjects() {
 
         this.ctx.translate(-this.camera_x, 0);
         this.addToMap(this.statusBar);
+        this.addToMap(this.bottleBar);
+        this.addToMap(this.coinBar);
         this.ctx.translate(this.camera_x, 0);
 
         this.addToMap(this.character);
         this.addObjectsToMap(this.level.clouds);
         this.addObjectsToMap(this.level.enemies);
+        this.addObjectsToMap(this.level.coins);
+        this.addObjectsToMap(this.level.bottles);
         this.addObjectsToMap(this.throwableObjects);
 
-        this.ctx.translate(this.camera_x, 0);
+        this.ctx.translate(-this.camera_x, 0);
+
+        if (this.gameOver && this.gameOverImage) {
+            this.ctx.drawImage(this.gameOverImage, 0, 0, this.canvas.width, this.canvas.height);
+            document.getElementById('restart').style.display = 'inline-block';
+        }
 
         let self = this;
         requestAnimationFrame(function () {
@@ -93,10 +173,9 @@ checkThrowableObjects() {
         }
 
         mo.draw(this.ctx);
-        mo.drawFrame(this.ctx);
 
         if (mo.otherDirection) {
-            this.flipBackBack(mo);
+            this.flipImageBack(mo);
         }
     }
 
@@ -107,7 +186,7 @@ checkThrowableObjects() {
         mo.x = mo.x * -1;
     }
 
-    flipBackBack(mo) {
+    flipImageBack(mo) {
         mo.x = mo.x * -1;
         this.ctx.restore();
     }

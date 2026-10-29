@@ -9,47 +9,46 @@ function init() {
 
 
 window.addEventListener("keydown", (e) => {
-    console.log(e.keyCode);
-    if (e.keyCode == 39) {
+    if (e.key == "ArrowRight") {
         keyboard.RIGHT = true;
     }
-    if (e.keyCode == 37) {
+    if (e.key == "ArrowLeft") {
         keyboard.LEFT = true;
     }
-    if (e.keyCode == 38) {
+    if (e.key == "ArrowUp") {
         keyboard.UP = true;
     }
-    if (e.keyCode == 40) {
+    if (e.key == "ArrowDown") {
         keyboard.DOWN = true;
     }
-    if (e.keyCode == 32) {
+    if (e.key == " ") {
         keyboard.SPACE = true;
     }
-    if (e.keyCode == 68) {
+    if (e.key == "d" || e.key == "D") {
         keyboard.D = true;
     }
-    });
+});
 
-    window.addEventListener("keyup", (e) => {
-        if (e.keyCode == 39) {
-            keyboard.RIGHT = false;
-        }
-        if (e.keyCode == 37) {
-            keyboard.LEFT = false;
-        }
-        if (e.keyCode == 38) {
-            keyboard.UP = false;
-        }
-        if (e.keyCode == 40) {
-            keyboard.DOWN = false;
-        }
-        if (e.keyCode == 32) {
-            keyboard.SPACE = false;
-        }
-        if (e.keyCode == 68) {
-            keyboard.D = false;
-        }
-    });
+window.addEventListener("keyup", (e) => {
+    if (e.key == "ArrowRight") {
+        keyboard.RIGHT = false;
+    }
+    if (e.key == "ArrowLeft") {
+        keyboard.LEFT = false;
+    }
+    if (e.key == "ArrowUp") {
+        keyboard.UP = false;
+    }
+    if (e.key == "ArrowDown") {
+        keyboard.DOWN = false;
+    }
+    if (e.key == " ") {
+        keyboard.SPACE = false;
+    }
+    if (e.key == "d" || e.key == "D") {
+        keyboard.D = false;
+    }
+});
 
 
     function checkOrientation() {
