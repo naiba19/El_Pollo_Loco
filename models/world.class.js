@@ -27,6 +27,11 @@ class World {
 
     setWorld() {
         this.character.world = this;
+        this.level.enemies.forEach(enemy => {
+            if (enemy instanceof Endboss) {
+                enemy.world = this;
+            }
+        });
     }
 
     run() {
@@ -40,6 +45,23 @@ class World {
                 this.checkGameOver();
             }
         }, 200);
+        setInterval(() => {
+            if (!this.gameOver) {
+                this.checkJumpKills();
+            }
+        }, 1000 / 60);
+    }
+
+    checkJumpKills() {
+        this.level.enemies.forEach(enemy => {
+            if (enemy.isDead() || enemy instanceof Endboss) {
+                return;
+            }
+            if (this.character.isFallingOn(enemy)) {
+                enemy.hit(20);
+                this.character.jump();
+            }
+        });
     }
 
     checkThrowableObjects() {
@@ -55,10 +77,14 @@ class World {
 
     checkCollisions() {
         this.level.enemies.forEach(enemy => {
-            if (!enemy.isDead() && this.character.isColliding(enemy)) {
-                this.character.hit();
-                this.statusBar.setPercentage(this.character.energy);
+            if (enemy.isDead() || !this.character.isColliding(enemy)) {
+                return;
             }
+            if (!(enemy instanceof Endboss) && this.character.isFallingOn(enemy)) {
+                return;
+            }
+            this.character.hit();
+            this.statusBar.setPercentage(this.character.energy);
         });
     }
 
@@ -128,7 +154,7 @@ class World {
         this.coinBar.setPercentage(0);
         this.camera_x = 0;
         this.level = createLevel1();
-        this.character.world = this;
+        this.setWorld();
     }
 
     draw() {

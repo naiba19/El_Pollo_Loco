@@ -51,21 +51,36 @@ class Endboss extends MovableObject {
         this.loadImages(this.IMAGES_ATTACK);
         this.x = 2100;
         this.speed = 0.5;
+        this.alertRange = 400;
+        this.attackRange = 220;
         this.animate();
     }
 
     animate() {
         this.moveInterval = setInterval(() => {
-            if (!this.isDead() && !this.isHurt()) {
+            if (this.isDead() || this.isHurt()) {
+                return;
+            }
+            let distance = this.world ? Math.abs(this.world.character.x - this.x) : 9999;
+            if (distance < this.attackRange) {
+                this.moveLeft();
+            } else if (distance < this.alertRange) {
                 this.moveLeft();
             }
         }, 1000 / 60);
 
         this.animationInterval = setInterval(() => {
+            let distance = this.world ? Math.abs(this.world.character.x - this.x) : 9999;
             if (this.isDead()) {
-                this.playAnimation(this.IMAGES_DEAD);
+                if (!this.deathAnimationStarted) {
+                    this.currentImage = 0;
+                    this.deathAnimationStarted = true;
+                }
+                this.playAnimationOnce(this.IMAGES_DEAD);
             } else if (this.isHurt()) {
                 this.playAnimation(this.IMAGES_HURT);
+            } else if (distance < this.attackRange) {
+                this.playAnimation(this.IMAGES_ATTACK);
             } else {
                 this.playAnimation(this.IMAGES_WALKING);
             }

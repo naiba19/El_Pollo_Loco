@@ -9,12 +9,15 @@ class MovableObject extends DrawableObject {
     applyGravity() {
         setInterval(() => {
             if (this.isAboveGround() || this.speedY > 0) {
+                this.prevFeetY = this.y + this.height;
                 this.y -= this.speedY;
                 this.speedY -= this.acceleration;
                 if (!(this instanceof ThrowableObject) && this.y > 180) {
                     this.y = 180;
                     this.speedY = 0;
                 }
+            } else {
+                this.prevFeetY = this.y + this.height;
             }
         }, 1000 / 25);
     }
@@ -30,8 +33,23 @@ class MovableObject extends DrawableObject {
     isColliding(mo) {
         return this.x + this.width > mo.x &&
             this.y + this.height > mo.y &&
-            this.x < mo.x &&
+            this.x < mo.x + mo.width &&
             this.y < mo.y + mo.height;
+    }
+
+    isFallingOn(mo) {
+        if (this.speedY >= 0) {
+            return false;
+        }
+        let horizontalOverlap = this.x + this.width > mo.x && this.x < mo.x + mo.width;
+        if (!horizontalOverlap) {
+            return false;
+        }
+        let feetY = this.y + this.height;
+        let prevFeet = this.prevFeetY !== undefined ? this.prevFeetY : feetY;
+        let enemyTop = mo.y;
+        // swept check: feet were above the enemy top last frame and are at/below it now
+        return prevFeet <= enemyTop + mo.height * 0.6 && feetY >= enemyTop;
     }
 
     hit(damage = 5) {
