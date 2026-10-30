@@ -1,7 +1,11 @@
 
 function fullscreen() {
-    let canvas = document.getElementById('canvas');
-    enterFullscreen(canvas);
+    let container = document.getElementById('canvas-container');
+    if (document.fullscreenElement || document.webkitFullscreenElement) {
+        exitFullscreen();
+    } else {
+        enterFullscreen(container);
+    }
 }
 
 function enterFullscreen(element) {
