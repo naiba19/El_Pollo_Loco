@@ -86,9 +86,9 @@ canvas {
 
 .play-btn {
     position: absolute;
-    top: 62%;
+    top: 14px;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translateX(-50%);
     width: 96px;
     height: 96px;
     font-size: 44px;
@@ -97,11 +97,11 @@ canvas {
 }
 
 .play-btn:hover {
-    transform: translate(-50%, -50%) scale(1.08);
+    transform: translateX(-50%) scale(1.08);
 }
 
 .play-btn:active {
-    transform: translate(-50%, -50%) scale(0.95);
+    transform: translateX(-50%) scale(0.95);
 }
 
 #instructions-overlay {
@@ -290,11 +290,11 @@ canvas {
 @media only screen and (max-width: 720px) {
     canvas {
         width: 100%;
-    }   
+    }
 }
 
 @media only screen and (max-height: 480px) {
     canvas {
         height: 100vh;
-    }   
+    }
 }
