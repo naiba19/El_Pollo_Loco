@@ -33,6 +33,43 @@ canvas {
     object-fit: contain;
 }
 
+#restart {
+    margin: 0 0 16px;
+    padding: 12px 32px;
+    font-family: 'Poppins', Arial, Helvetica, sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #fff;
+    background: radial-gradient(circle at 30% 30%, #ffb74d 0%, #f57c00 70%, #e65100 100%);
+    border: 3px solid #7a3b12;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.35), inset 0 2px 3px rgba(255, 255, 255, 0.4);
+    transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+#restart:hover {
+    transform: scale(1.06);
+    filter: brightness(1.1);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4), inset 0 2px 3px rgba(255, 255, 255, 0.5);
+}
+
+#restart:active {
+    transform: scale(0.96);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.35), inset 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+.restart-icon {
+    display: inline-block;
+    margin-right: 10px;
+    font-size: 22px;
+    vertical-align: -2px;
+}
+
 #start-screen {
     position: absolute;
     top: 0;
@@ -309,10 +346,30 @@ canvas {
     canvas {
         width: 100%;
     }
+
+    #restart {
+        font-size: 16px;
+        padding: 10px 24px;
+        margin-bottom: 10px;
+    }
+
+    .restart-icon {
+        font-size: 18px;
+    }
 }
 
 @media only screen and (max-height: 480px) {
     canvas {
         height: 100vh;
+    }
+
+    #restart {
+        font-size: 14px;
+        padding: 8px 20px;
+        margin-bottom: 6px;
+    }
+
+    .restart-icon {
+        font-size: 16px;
     }
 }
