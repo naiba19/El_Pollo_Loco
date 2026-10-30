@@ -75,12 +75,16 @@
 
 <body>
     <h1>El Pollo Loco</h1>
-    <button id="fullscreen" onclick="fullscreen()">Fullscreen</button>
-    <button id="start" onclick="startGame()">Start</button>
     <button id="restart" onclick="world.restart()" style="display:none;">Restart</button>
     <div id="canvas-container">
         <canvas id="canvas" width="720" height="480"></canvas>
-        <div id="start-screen"></div>
+        <div id="start-screen">
+            <button id="sound-btn" class="ui-btn corner-btn top-left" aria-label="Sound">&#128266;</button>
+            <button id="instructions-btn" class="ui-btn corner-btn top-right" onclick="openInstructions()" aria-label="How to Play">&#9000;</button>
+            <button id="start" class="ui-btn play-btn" onclick="startGame()" aria-label="Play">&#9654;</button>
+            <a id="impressum-btn" class="ui-btn corner-btn bottom-left" href="impressum.html" aria-label="Impressum">&#8505;</a>
+            <button id="fullscreen" class="ui-btn corner-btn bottom-right" onclick="fullscreen()" aria-label="Fullscreen">&#x26F6;</button>
+        </div>
     </div>
     <div id="touch-controls">
         <button id="btn-left" class="touch-btn" oncontextmenu="return false">&#9664;</button>
@@ -92,9 +96,41 @@
         <div class="rotate-icon">&#128260;</div>
         <p>Please rotate your device to landscape to play.</p>
     </div>
-    <footer>
-        <a href="impressum.html">Impressum</a>
-    </footer>
+    <div id="instructions-overlay" onclick="closeInstructions()">
+        <div class="instructions-dialog" onclick="event.stopPropagation()">
+            <button class="instructions-close" onclick="closeInstructions()" aria-label="Close">&times;</button>
+            <h2>How to Play</h2>
+            <p class="instructions-goal">
+                Help Pepe cross the desert! Collect coins, grab salsa bottles and defeat
+                the giant Endboss at the end of the level to win the game.
+            </p>
+            <div class="instructions-grid">
+                <div class="instruction-item">
+                    <span class="key">&larr;</span>
+                    <span class="key-label">Move Left</span>
+                </div>
+                <div class="instruction-item">
+                    <span class="key">&rarr;</span>
+                    <span class="key-label">Move Right</span>
+                </div>
+                <div class="instruction-item">
+                    <span class="key key-wide">Space</span>
+                    <span class="key-label">Jump</span>
+                </div>
+                <div class="instruction-item">
+                    <span class="key">D</span>
+                    <span class="key-label">Throw Bottle</span>
+                </div>
+            </div>
+            <ul class="instructions-tips">
+                <li>Walk over <strong>coins</strong> and <strong>bottles</strong> to collect them &ndash; the bars at the top fill up.</li>
+                <li>You can only throw a bottle if you have collected one.</li>
+                <li>A bottle defeats a normal chicken with <strong>one hit</strong>.</li>
+                <li>The <strong>Endboss</strong> is tougher &ndash; hit him <strong>5 times</strong> with bottles.</li>
+                <li>Touching an enemy costs health. If the health bar is empty, the game is over.</li>
+            </ul>
+        </div>
+    </div>
 </body>
 
 </html>

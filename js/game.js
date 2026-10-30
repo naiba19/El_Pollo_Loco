@@ -42,6 +42,14 @@ function initTouchControls() {
 
 document.addEventListener('DOMContentLoaded', initTouchControls);
 
+function openInstructions() {
+    document.getElementById('instructions-overlay').classList.add('open');
+}
+
+function closeInstructions() {
+    document.getElementById('instructions-overlay').classList.remove('open');
+}
+
 
 window.addEventListener("keydown", (e) => {
     if (e.key == "ArrowRight") {

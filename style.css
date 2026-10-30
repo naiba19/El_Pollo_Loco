@@ -26,12 +26,208 @@ canvas {
     background-position: center;
 }
 
-#start {
-    cursor: pointer;
-    font-family: 'Poppins', Arial, Helvetica, sans-serif;
+.ui-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: 3px solid #7a3b12;
+    background: radial-gradient(circle at 30% 30%, #ffb74d 0%, #f57c00 70%, #e65100 100%);
+    color: #fff;
     font-size: 24px;
-    padding: 8px 32px;
-    margin: 8px;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.35), inset 0 2px 3px rgba(255, 255, 255, 0.4);
+    text-decoration: none;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+    box-sizing: border-box;
+    padding: 0;
+}
+
+.ui-btn:hover {
+    transform: scale(1.1);
+    filter: brightness(1.1);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4), inset 0 2px 3px rgba(255, 255, 255, 0.5);
+}
+
+.ui-btn:active {
+    transform: scale(0.96);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.35), inset 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+.corner-btn {
+    position: absolute;
+    z-index: 5;
+}
+
+.top-left {
+    top: 14px;
+    left: 14px;
+}
+
+.top-right {
+    top: 14px;
+    right: 14px;
+}
+
+.bottom-left {
+    bottom: 14px;
+    left: 14px;
+}
+
+.bottom-right {
+    bottom: 14px;
+    right: 14px;
+}
+
+.play-btn {
+    position: absolute;
+    top: 62%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 96px;
+    height: 96px;
+    font-size: 44px;
+    z-index: 6;
+    border-width: 4px;
+}
+
+.play-btn:hover {
+    transform: translate(-50%, -50%) scale(1.08);
+}
+
+.play-btn:active {
+    transform: translate(-50%, -50%) scale(0.95);
+}
+
+#instructions-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.75);
+    align-items: center;
+    justify-content: center;
+    z-index: 900;
+    padding: 16px;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+#instructions-overlay.open {
+    display: flex;
+}
+
+.instructions-dialog {
+    position: relative;
+    max-width: 560px;
+    width: 100%;
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
+    margin: auto;
+    background: linear-gradient(160deg, #fff3e0 0%, #ffe0b2 100%);
+    border: 4px solid #a3521f;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    padding: 32px 28px;
+    font-family: 'Poppins', Arial, Helvetica, sans-serif;
+    color: #4e2a0e;
+}
+
+.instructions-dialog h2 {
+    margin: 0 0 12px;
+    font-size: 32px;
+    font-weight: 700;
+    color: #a3521f;
+    text-align: center;
+    letter-spacing: 1px;
+}
+
+.instructions-goal {
+    font-size: 15px;
+    text-align: center;
+    margin: 0 0 20px;
+}
+
+.instructions-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px 24px;
+    margin-bottom: 20px;
+}
+
+.instruction-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.key {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    height: 44px;
+    padding: 0 10px;
+    background: linear-gradient(180deg, #ffffff 0%, #e0e0e0 100%);
+    border: 2px solid #5d4037;
+    border-bottom-width: 5px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 18px;
+    color: #3e2723;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+    box-sizing: border-box;
+}
+
+.key-wide {
+    min-width: 76px;
+    font-size: 15px;
+}
+
+.key-label {
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.instructions-tips {
+    margin: 0;
+    padding-left: 20px;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.instructions-close {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    background: none;
+    border: none;
+    font-size: 32px;
+    line-height: 1;
+    color: #a3521f;
+    cursor: pointer;
+    padding: 4px;
+}
+
+@media only screen and (max-width: 560px) {
+    .instructions-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .instructions-dialog {
+        padding: 24px 18px;
+    }
+
+    .instructions-dialog h2 {
+        font-size: 26px;
+    }
 }
 
 #touch-controls {
@@ -39,17 +235,6 @@ canvas {
     justify-content: center;
     gap: 16px;
     margin-top: 12px;
-}
-
-footer {
-    margin-top: 16px;
-    padding: 8px;
-}
-
-footer a {
-    color: #fff;
-    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6);
-    font-size: 18px;
 }
 
 .touch-btn {
