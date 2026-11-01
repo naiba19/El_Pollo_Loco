@@ -9,6 +9,13 @@ canvas {
     display: block;
 }
 
+button,
+a[href],
+.ui-btn,
+.touch-btn {
+    cursor: pointer;
+}
+
 #canvas-container {
     position: relative;
     width: 720px;
@@ -33,8 +40,16 @@ canvas {
     object-fit: contain;
 }
 
-#restart {
+#endscreen-buttons {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
     margin: 0 0 16px;
+}
+
+#restart,
+#home {
+    margin: 0;
     padding: 12px 32px;
     font-family: 'Poppins', Arial, Helvetica, sans-serif;
     font-size: 20px;
@@ -251,6 +266,15 @@ canvas {
     font-weight: 600;
 }
 
+.instructions-touch {
+    font-size: 14px;
+    text-align: center;
+    margin: 0 0 16px;
+    padding: 10px 12px;
+    background-color: rgba(163, 82, 31, 0.1);
+    border-radius: 8px;
+}
+
 .instructions-tips {
     margin: 0;
     padding-left: 20px;
@@ -347,9 +371,13 @@ canvas {
         width: 100%;
     }
 
-    #restart {
+    #restart,
+    #home {
         font-size: 16px;
         padding: 10px 24px;
+    }
+
+    #endscreen-buttons {
         margin-bottom: 10px;
     }
 
@@ -363,9 +391,13 @@ canvas {
         height: 100vh;
     }
 
-    #restart {
+    #restart,
+    #home {
         font-size: 14px;
         padding: 8px 20px;
+    }
+
+    #endscreen-buttons {
         margin-bottom: 6px;
     }
 

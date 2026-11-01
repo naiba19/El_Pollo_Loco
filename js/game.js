@@ -18,6 +18,14 @@ function startGame() {
     world = new World(canvas, keyboard);
 }
 
+function goHome() {
+    document.getElementById('restart').style.display = 'none';
+    document.getElementById('home').style.display = 'none';
+    document.getElementById('start-screen').style.display = 'block';
+    document.getElementById('start').style.display = 'inline-flex';
+    world = null;
+}
+
 function bindTouchButton(buttonId, key) {
     let btn = document.getElementById(buttonId);
     btn.addEventListener('touchstart', (e) => {

@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>El Pollo Loco</title>
 
+    <link rel="icon" type="image/png" href="images/favicon.png">
     <link rel="stylesheet" href="style.css">
 
     <script src="models/drawable-object.class.js"></script>
@@ -33,6 +34,7 @@
     <script src="levels/level1.js"></script>
     <script src="js/game.js"></script>
     <script src="models/fullscreen.js"></script>
+    <script src="models/sound.js"></script>
 
     <style>
         @font-face {
@@ -56,6 +58,7 @@
             background-image: url(images/desert.png);
             background-position: center;
             font-family: 'Poppins', Arial, Helvetica, sans-serif;
+            overflow: hidden;
         }
 
         h1 {
@@ -90,11 +93,14 @@
 
 <body>
     <h1>El Pollo Loco</h1>
-    <button id="restart" onclick="world.restart()" style="display:none;"><span class="restart-icon">&#8635;</span>Restart</button>
+    <div id="endscreen-buttons">
+        <button id="restart" onclick="world.restart()" style="display:none;"><span class="restart-icon">&#8635;</span>Restart</button>
+        <button id="home" onclick="goHome()" style="display:none;"><span class="restart-icon">&#127968;</span>Home</button>
+    </div>
     <div id="canvas-container">
         <canvas id="canvas" width="720" height="480"></canvas>
         <div id="start-screen">
-            <button id="sound-btn" class="ui-btn corner-btn top-left" aria-label="Sound">&#128266;</button>
+            <button id="sound-btn" class="ui-btn corner-btn top-left" onclick="toggleSound()" aria-label="Sound">&#128266;</button>
             <button id="instructions-btn" class="ui-btn corner-btn top-right" onclick="openInstructions()" aria-label="How to Play">&#9000;</button>
             <button id="start" class="ui-btn play-btn" onclick="startGame()" aria-label="Play">&#9654;</button>
             <a id="impressum-btn" class="ui-btn corner-btn bottom-left" href="impressum.html" aria-label="Impressum">&#8505;</a>
@@ -137,6 +143,7 @@
                     <span class="key-label">Throw Bottle</span>
                 </div>
             </div>
+            <p class="instructions-touch">On touch devices, use the on-screen buttons: <strong>&#9664; &#9654;</strong> to move, <strong>&#10514;</strong> to jump and <strong>&#127870;</strong> to throw a bottle.</p>
             <ul class="instructions-tips">
                 <li>Walk over <strong>coins</strong> and <strong>bottles</strong> to collect them &ndash; the bars at the top fill up.</li>
                 <li>You can only throw a bottle if you have collected one.</li>

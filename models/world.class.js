@@ -136,6 +136,7 @@ class World {
 
     restart() {
         document.getElementById('restart').style.display = 'none';
+        document.getElementById('home').style.display = 'none';
         this.gameOver = false;
         this.gameOverImage = null;
         this.character.energy = 100;
@@ -181,6 +182,7 @@ class World {
         if (this.gameOver && this.gameOverImage) {
             this.ctx.drawImage(this.gameOverImage, 0, 0, this.canvas.width, this.canvas.height);
             document.getElementById('restart').style.display = 'inline-block';
+            document.getElementById('home').style.display = 'inline-block';
         }
 
         let self = this;
