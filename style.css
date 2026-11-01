@@ -17,7 +17,9 @@ body {
     justify-content: center;
     min-height: 100vh;
     background-image: url(images/desert.png);
-    background-position: center;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
     font-family: 'Poppins', Arial, Helvetica, sans-serif;
     overflow: hidden;
 }
@@ -36,6 +38,9 @@ canvas {
     background-color: black;
     display: block;
     border: 1px solid black;
+    box-sizing: border-box;
+    width: 720px;
+    height: 480px;
 }
 
 button,
