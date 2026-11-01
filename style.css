@@ -1,12 +1,41 @@
+@font-face {
+    font-family: 'Poppins';
+    src: url('fonts/poppins-regular.ttf') format('truetype');
+    font-weight: 400;
+}
+
+@font-face {
+    font-family: 'Poppins';
+    src: url('fonts/poppins-700.ttf') format('truetype');
+    font-weight: 700;
+}
+
 body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-image: url(images/desert.png);
+    background-position: center;
+    font-family: 'Poppins', Arial, Helvetica, sans-serif;
+    overflow: hidden;
+}
+
+h1 {
+    font-size: 120px;
+    letter-spacing: 4px;
+    font-family: 'Poppins', Arial, Helvetica, sans-serif;
+    font-weight: 700;
+    color: #7a3b12;
+    margin: 0 0 24px;
+    text-shadow: 0 2px 6px rgba(255, 255, 255, 0.6), 2px 2px 10px rgba(0, 0, 0, 0.35);
 }
 
 canvas {
     background-color: black;
     display: block;
+    border: 1px solid black;
 }
 
 button,
@@ -336,6 +365,37 @@ a[href],
     }
 }
 
+body.impressum-page {
+    display: block;
+    overflow: auto;
+    color: #222;
+    line-height: 1.6;
+}
+
+.impressum-box {
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 32px;
+    background-color: rgba(255, 255, 255, 0.92);
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.impressum-box h1 {
+    font-size: 40px;
+    letter-spacing: 2px;
+}
+
+.impressum-box h2 {
+    font-size: 24px;
+    margin-top: 24px;
+}
+
+.back-link {
+    display: inline-block;
+    margin-top: 24px;
+}
+
 #rotate-overlay {
     display: none;
 }
@@ -367,6 +427,11 @@ a[href],
 }
 
 @media only screen and (max-width: 720px) {
+    h1 {
+        font-size: 56px;
+        margin-bottom: 12px;
+    }
+
     canvas {
         width: 100%;
     }
@@ -387,6 +452,11 @@ a[href],
 }
 
 @media only screen and (max-height: 480px) {
+    h1 {
+        font-size: 48px;
+        margin-bottom: 8px;
+    }
+
     canvas {
         height: 100vh;
     }

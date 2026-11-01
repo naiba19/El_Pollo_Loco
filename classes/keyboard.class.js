@@ -1,4 +1,7 @@
 class Keyboard {
+    /**
+     * Creates the shared keyboard state with all keys released.
+     */
     constructor() {
         this.LEFT = false;
         this.RIGHT = false;

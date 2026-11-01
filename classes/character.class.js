@@ -70,6 +70,9 @@ class Character extends MovableObject {
     world;
     lastMoveTime = new Date().getTime();
 
+    /**
+     * Creates the playable character, loads its sprites and starts gravity and animation.
+     */
     constructor() {
         super().loadImage("images/2_character_pepe/2_walk/W-21.png");
         this.loadImages(this.IMAGES_WALKING);
@@ -82,56 +85,108 @@ class Character extends MovableObject {
         this.animate();
     }
 
+    /**
+     * Starts the movement and animation loops for the character.
+     * @returns {void}
+     */
     animate() {
+        this.startMovementLoop();
+        this.startAnimationLoop();
+    }
+
+    /**
+     * Runs the movement loop that reads the keyboard and moves the camera.
+     * @returns {void}
+     */
+    startMovementLoop() {
         setInterval(() => {
             if (this.isDead()) {
                 return;
             }
-            if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
-                this.moveRight();
-                this.otherDirection = false;
-                this.lastMoveTime = new Date().getTime();
-            }
-
-            if (this.world.keyboard.LEFT && this.x > 0) {
-                this.moveLeft();
-                this.otherDirection = true;
-                this.lastMoveTime = new Date().getTime();
-            }
-
-            if (this.world.keyboard.SPACE && !this.isAboveGround()) {
-                this.jump();
-                this.lastMoveTime = new Date().getTime();
-            }
-
+            this.handleMovement();
             this.world.camera_x = -this.x + 100;
         }, 1000 / 60);
-
-        setInterval(() => {
-            if (this.isDead()) {
-                if (!this.deathAnimationStarted) {
-                    this.currentImage = 0;
-                    this.deathAnimationStarted = true;
-                }
-                this.playAnimationOnce(this.IMAGES_DEAD);
-            } else if (this.isHurt()) {
-                this.playAnimation(this.IMAGES_HURT);
-            } else if (this.isAboveGround()) {
-                this.playAnimation(this.IMAGES_JUMPING);
-            } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-                this.playAnimation(this.IMAGES_WALKING);
-            } else {
-                this.playIdleAnimation();
-            }
-    }, 50);
-}
-
-playIdleAnimation() {
-    let idleTime = new Date().getTime() - this.lastMoveTime;
-    if (idleTime > 15000) {
-        this.playAnimation(this.IMAGES_SLEEP);
-    } else {
-        this.playAnimation(this.IMAGES_IDLE);
     }
-}
+
+    /**
+     * Moves or jumps the character based on the currently pressed keys.
+     * @returns {void}
+     */
+    handleMovement() {
+        if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
+            this.moveRight();
+            this.otherDirection = false;
+            this.recordActivity();
+        }
+        if (this.world.keyboard.LEFT && this.x > 0) {
+            this.moveLeft();
+            this.otherDirection = true;
+            this.recordActivity();
+        }
+        if (this.world.keyboard.SPACE && !this.isAboveGround()) {
+            this.jump();
+            this.recordActivity();
+        }
+    }
+
+    /**
+     * Records the current time as the last moment the character was active.
+     * @returns {void}
+     */
+    recordActivity() {
+        this.lastMoveTime = new Date().getTime();
+    }
+
+    /**
+     * Runs the animation loop that picks the correct sprite set each frame.
+     * @returns {void}
+     */
+    startAnimationLoop() {
+        setInterval(() => {
+            this.updateAnimation();
+        }, 50);
+    }
+
+    /**
+     * Selects and plays the animation matching the character's current state.
+     * @returns {void}
+     */
+    updateAnimation() {
+        if (this.isDead()) {
+            this.playDeathAnimation();
+        } else if (this.isHurt()) {
+            this.playAnimation(this.IMAGES_HURT);
+        } else if (this.isAboveGround()) {
+            this.playAnimation(this.IMAGES_JUMPING);
+        } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
+            this.playAnimation(this.IMAGES_WALKING);
+        } else {
+            this.playIdleAnimation();
+        }
+    }
+
+    /**
+     * Plays the death animation once, starting from the first frame.
+     * @returns {void}
+     */
+    playDeathAnimation() {
+        if (!this.deathAnimationStarted) {
+            this.currentImage = 0;
+            this.deathAnimationStarted = true;
+        }
+        this.playAnimationOnce(this.IMAGES_DEAD);
+    }
+
+    /**
+     * Plays the idle animation, switching to the sleep animation after 15 seconds.
+     * @returns {void}
+     */
+    playIdleAnimation() {
+        let idleTime = new Date().getTime() - this.lastMoveTime;
+        if (idleTime > 15000) {
+            this.playAnimation(this.IMAGES_SLEEP);
+        } else {
+            this.playAnimation(this.IMAGES_IDLE);
+        }
+    }
 }

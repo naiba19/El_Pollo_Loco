@@ -5,6 +5,11 @@ class Coin extends DrawableObject {
         "images/8_coin/coin_2.png"
     ];
 
+    /**
+     * Creates a collectible coin at the given position.
+     * @param {number} x - The horizontal position.
+     * @param {number} y - The vertical position.
+     */
     constructor(x, y) {
         super();
         this.loadImages(this.IMAGES);
@@ -16,6 +21,10 @@ class Coin extends DrawableObject {
         this.animate();
     }
 
+    /**
+     * Starts the coin's spinning animation.
+     * @returns {void}
+     */
     animate() {
         setInterval(() => {
             let i = this.currentImage % this.IMAGES.length;

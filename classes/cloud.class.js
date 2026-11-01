@@ -3,6 +3,9 @@ class Cloud extends MovableObject {
     height = 250;
     width = 500;
 
+    /**
+     * Creates a cloud at a random horizontal position and starts its drift.
+     */
     constructor() {
         super().loadImage("images/5_background/layers/4_clouds/1.png");
 
@@ -11,10 +14,18 @@ class Cloud extends MovableObject {
         this.animate();
     }
 
+    /**
+     * Starts the cloud's horizontal drift.
+     * @returns {void}
+     */
     animate() {
         this.moveLeft();
     }
 
+    /**
+     * Moves the cloud slowly to the left.
+     * @returns {void}
+     */
     moveLeft() {
         setInterval(() => {
             this.x -= this.speed;

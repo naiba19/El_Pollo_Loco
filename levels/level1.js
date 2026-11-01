@@ -1,3 +1,7 @@
+/**
+ * Builds a fresh level 1 with all enemies, clouds, background and collectibles.
+ * @returns {Level} A new level instance.
+ */
 function createLevel1() {
     return new Level(
     [

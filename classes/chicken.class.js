@@ -12,6 +12,9 @@ class Chicken extends MovableObject {
     ];
     IMAGE_DEAD = "images/3_enemies_chicken/chicken_normal/2_dead/dead.png";
 
+    /**
+     * Creates a normal chicken with a random position and speed.
+     */
     constructor() {
         super().loadImage("images/3_enemies_chicken/chicken_normal/1_walk/1_w.png");
         this.loadImages(this.IMAGES_WALKING);
@@ -24,6 +27,10 @@ class Chicken extends MovableObject {
     }
 
 
+    /**
+     * Starts the movement and animation loops for the chicken.
+     * @returns {void}
+     */
     animate() {
         this.moveInterval = setInterval(() => {
             if (!this.isDead()) {
@@ -39,4 +46,4 @@ class Chicken extends MovableObject {
             }
         }, 200);
     }
-    }
+}

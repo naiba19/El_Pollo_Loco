@@ -12,6 +12,9 @@ class SmallChicken extends MovableObject {
     ];
     IMAGE_DEAD = "images/3_enemies_chicken/chicken_small/2_dead/dead.png";
 
+    /**
+     * Creates a small chicken with a random position and speed.
+     */
     constructor() {
         super().loadImage("images/3_enemies_chicken/chicken_small/1_walk/1_w.png");
         this.loadImages(this.IMAGES_WALKING);
@@ -23,6 +26,10 @@ class SmallChicken extends MovableObject {
         this.animate();
     }
 
+    /**
+     * Starts the movement and animation loops for the small chicken.
+     * @returns {void}
+     */
     animate() {
         this.moveInterval = setInterval(() => {
             if (!this.isDead()) {

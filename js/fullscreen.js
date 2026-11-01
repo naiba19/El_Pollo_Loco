@@ -1,4 +1,7 @@
-
+/**
+ * Toggles fullscreen mode on the game container.
+ * @returns {void}
+ */
 function fullscreen() {
     let container = document.getElementById('canvas-container');
     if (document.fullscreenElement || document.webkitFullscreenElement) {
@@ -8,6 +11,11 @@ function fullscreen() {
     }
 }
 
+/**
+ * Requests fullscreen mode for the given element, with vendor fallbacks.
+ * @param {HTMLElement} element - The element to show in fullscreen.
+ * @returns {void}
+ */
 function enterFullscreen(element) {
     if (element.requestFullscreen) {
         element.requestFullscreen();
@@ -18,6 +26,10 @@ function enterFullscreen(element) {
     }
 }
 
+/**
+ * Exits fullscreen mode, with vendor fallbacks.
+ * @returns {void}
+ */
 function exitFullscreen() {
     if (document.exitFullscreen) {
         document.exitFullscreen();

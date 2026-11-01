@@ -2,10 +2,18 @@ let canvas;
 let world;
 let keyboard = new Keyboard();
 
+/**
+ * Grabs the canvas element. Called once before the game starts.
+ * @returns {void}
+ */
 function init() {
     canvas = document.getElementById("canvas");
 }
 
+/**
+ * Hides the start screen and creates the game world. Ignored if already running.
+ * @returns {void}
+ */
 function startGame() {
     if (world) {
         return;
@@ -18,6 +26,10 @@ function startGame() {
     world = new World(canvas, keyboard);
 }
 
+/**
+ * Returns to the start screen and discards the current game world.
+ * @returns {void}
+ */
 function goHome() {
     document.getElementById('restart').style.display = 'none';
     document.getElementById('home').style.display = 'none';
@@ -26,6 +38,12 @@ function goHome() {
     world = null;
 }
 
+/**
+ * Binds a touch button to a keyboard flag using touchstart/touchend/touchcancel.
+ * @param {string} buttonId - The id of the touch button element.
+ * @param {string} key - The keyboard flag to set while the button is held.
+ * @returns {void}
+ */
 function bindTouchButton(buttonId, key) {
     let btn = document.getElementById(buttonId);
     btn.addEventListener('touchstart', (e) => {
@@ -41,6 +59,10 @@ function bindTouchButton(buttonId, key) {
     });
 }
 
+/**
+ * Wires up all on-screen touch buttons to their keyboard flags.
+ * @returns {void}
+ */
 function initTouchControls() {
     bindTouchButton('btn-left', 'LEFT');
     bindTouchButton('btn-right', 'RIGHT');
@@ -50,59 +72,54 @@ function initTouchControls() {
 
 document.addEventListener('DOMContentLoaded', initTouchControls);
 
+/**
+ * Opens the instructions dialog.
+ * @returns {void}
+ */
 function openInstructions() {
     document.getElementById('instructions-overlay').classList.add('open');
 }
 
+/**
+ * Closes the instructions dialog.
+ * @returns {void}
+ */
 function closeInstructions() {
     document.getElementById('instructions-overlay').classList.remove('open');
 }
 
 
-window.addEventListener("keydown", (e) => {
-    if (e.key == "ArrowRight") {
-        keyboard.RIGHT = true;
-    }
-    if (e.key == "ArrowLeft") {
-        keyboard.LEFT = true;
-    }
-    if (e.key == "ArrowUp") {
-        keyboard.UP = true;
-    }
-    if (e.key == "ArrowDown") {
-        keyboard.DOWN = true;
-    }
-    if (e.key == " ") {
-        keyboard.SPACE = true;
-    }
-    if (e.key == "d" || e.key == "D") {
-        keyboard.D = true;
-    }
-});
+const KEY_MAP = {
+    ArrowRight: 'RIGHT',
+    ArrowLeft: 'LEFT',
+    ArrowUp: 'UP',
+    ArrowDown: 'DOWN',
+    ' ': 'SPACE',
+    d: 'D',
+    D: 'D'
+};
 
-window.addEventListener("keyup", (e) => {
-    if (e.key == "ArrowRight") {
-        keyboard.RIGHT = false;
+/**
+ * Sets or releases the keyboard flag matching the pressed key.
+ * @param {KeyboardEvent} event - The keyboard event.
+ * @param {boolean} isPressed - True on keydown, false on keyup.
+ * @returns {void}
+ */
+function setKey(event, isPressed) {
+    let key = KEY_MAP[event.key];
+    if (key) {
+        keyboard[key] = isPressed;
     }
-    if (e.key == "ArrowLeft") {
-        keyboard.LEFT = false;
-    }
-    if (e.key == "ArrowUp") {
-        keyboard.UP = false;
-    }
-    if (e.key == "ArrowDown") {
-        keyboard.DOWN = false;
-    }
-    if (e.key == " ") {
-        keyboard.SPACE = false;
-    }
-    if (e.key == "d" || e.key == "D") {
-        keyboard.D = false;
-    }
-});
+}
 
+window.addEventListener("keydown", (e) => setKey(e, true));
+window.addEventListener("keyup", (e) => setKey(e, false));
 
-    function checkOrientation() {
+/**
+ * Adjusts the canvas height to fit short landscape screens.
+ * @returns {void}
+ */
+function checkOrientation() {
     if (window.matchMedia("(orientation: landscape)").matches) {
         if (window.innerHeight < 480) {
             let newHeight = window.innerHeight;
@@ -113,6 +130,7 @@ window.addEventListener("keyup", (e) => {
         document.getElementById('canvas').style.height = `100%`;
     }
 }
+
 window.addEventListener("resize", checkOrientation);
 window.addEventListener("load", checkOrientation);
 window.addEventListener("orientationchange", checkOrientation);

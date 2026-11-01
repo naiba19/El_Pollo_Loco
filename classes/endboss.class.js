@@ -44,6 +44,9 @@ class Endboss extends MovableObject {
         "images/4_enemie_boss_chicken/3_attack/G20.png"
     ];
 
+    /**
+     * Creates the endboss, loads its sprites and starts its behavior loops.
+     */
     constructor() {
         super().loadImage(this.IMAGES_WALKING[0]);
         this.loadImages(this.IMAGES_WALKING);
@@ -57,34 +60,73 @@ class Endboss extends MovableObject {
         this.animate();
     }
 
+    /**
+     * Starts the movement and animation loops for the endboss.
+     * @returns {void}
+     */
     animate() {
+        this.startMovementLoop();
+        this.startAnimationLoop();
+    }
+
+    /**
+     * Runs the loop that walks the endboss toward the character when in range.
+     * @returns {void}
+     */
+    startMovementLoop() {
         this.moveInterval = setInterval(() => {
             if (this.isDead() || this.isHurt()) {
                 return;
             }
-            let distance = this.world ? Math.abs(this.world.character.x - this.x) : 9999;
-            if (distance < this.attackRange) {
-                this.moveLeft();
-            } else if (distance < this.alertRange) {
+            if (this.getDistanceToCharacter() < this.alertRange) {
                 this.moveLeft();
             }
         }, 1000 / 60);
+    }
 
+    /**
+     * Runs the loop that picks the endboss sprite set based on its state.
+     * @returns {void}
+     */
+    startAnimationLoop() {
         this.animationInterval = setInterval(() => {
-            let distance = this.world ? Math.abs(this.world.character.x - this.x) : 9999;
-            if (this.isDead()) {
-                if (!this.deathAnimationStarted) {
-                    this.currentImage = 0;
-                    this.deathAnimationStarted = true;
-                }
-                this.playAnimationOnce(this.IMAGES_DEAD);
-            } else if (this.isHurt()) {
-                this.playAnimation(this.IMAGES_HURT);
-            } else if (distance < this.attackRange) {
-                this.playAnimation(this.IMAGES_ATTACK);
-            } else {
-                this.playAnimation(this.IMAGES_WALKING);
-            }
+            this.updateAnimation();
         }, 200);
+    }
+
+    /**
+     * Selects and plays the animation matching the endboss's current state.
+     * @returns {void}
+     */
+    updateAnimation() {
+        if (this.isDead()) {
+            this.playDeathAnimation();
+        } else if (this.isHurt()) {
+            this.playAnimation(this.IMAGES_HURT);
+        } else if (this.getDistanceToCharacter() < this.attackRange) {
+            this.playAnimation(this.IMAGES_ATTACK);
+        } else {
+            this.playAnimation(this.IMAGES_WALKING);
+        }
+    }
+
+    /**
+     * Plays the death animation once, starting from the first frame.
+     * @returns {void}
+     */
+    playDeathAnimation() {
+        if (!this.deathAnimationStarted) {
+            this.currentImage = 0;
+            this.deathAnimationStarted = true;
+        }
+        this.playAnimationOnce(this.IMAGES_DEAD);
+    }
+
+    /**
+     * Computes the horizontal distance to the character.
+     * @returns {number} The distance in pixels, or a large value when no world is linked.
+     */
+    getDistanceToCharacter() {
+        return this.world ? Math.abs(this.world.character.x - this.x) : 9999;
     }
 }
