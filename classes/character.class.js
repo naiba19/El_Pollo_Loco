@@ -69,6 +69,8 @@ class Character extends MovableObject {
 
     world;
     lastMoveTime = new Date().getTime();
+    isRunningSoundPlaying = false;
+    isSnoreSoundPlaying = false;
 
     /**
      * Creates the playable character, loads its sprites and starts gravity and animation.
@@ -113,19 +115,39 @@ class Character extends MovableObject {
      * @returns {void}
      */
     handleMovement() {
+        let moving = false;
         if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
             this.moveRight();
             this.otherDirection = false;
             this.recordActivity();
+            moving = true;
         }
         if (this.world.keyboard.LEFT && this.x > 0) {
             this.moveLeft();
             this.otherDirection = true;
             this.recordActivity();
+            moving = true;
         }
         if (this.world.keyboard.SPACE && !this.isAboveGround()) {
             this.jump();
             this.recordActivity();
+            audioManager.play('jump');
+        }
+        this.updateRunningSound(moving);
+    }
+
+    /**
+     * Starts or stops the running loop based on whether the character is moving on the ground.
+     * @param {boolean} moving - True while a movement key is held.
+     * @returns {void}
+     */
+    updateRunningSound(moving) {
+        if (moving && !this.isAboveGround() && !this.isRunningSoundPlaying) {
+            audioManager.playLoop('run');
+            this.isRunningSoundPlaying = true;
+        } else if ((!moving || this.isAboveGround()) && this.isRunningSoundPlaying) {
+            audioManager.stopLoop('run');
+            this.isRunningSoundPlaying = false;
         }
     }
 
@@ -173,6 +195,8 @@ class Character extends MovableObject {
         if (!this.deathAnimationStarted) {
             this.currentImage = 0;
             this.deathAnimationStarted = true;
+            audioManager.stopAllLoops();
+            audioManager.play('dead');
         }
         this.playAnimationOnce(this.IMAGES_DEAD);
     }
@@ -185,8 +209,25 @@ class Character extends MovableObject {
         let idleTime = new Date().getTime() - this.lastMoveTime;
         if (idleTime > 15000) {
             this.playAnimation(this.IMAGES_SLEEP);
+            this.updateSnoreSound(true);
         } else {
             this.playAnimation(this.IMAGES_IDLE);
+            this.updateSnoreSound(false);
+        }
+    }
+
+    /**
+     * Starts or stops the snoring loop based on whether the character is sleeping.
+     * @param {boolean} sleeping - True while the sleep animation plays.
+     * @returns {void}
+     */
+    updateSnoreSound(sleeping) {
+        if (sleeping && !this.isSnoreSoundPlaying) {
+            audioManager.playLoop('snore');
+            this.isSnoreSoundPlaying = true;
+        } else if (!sleeping && this.isSnoreSoundPlaying) {
+            audioManager.stopLoop('snore');
+            this.isSnoreSoundPlaying = false;
         }
     }
 }

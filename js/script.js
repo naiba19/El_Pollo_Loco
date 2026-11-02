@@ -23,6 +23,8 @@ function startGame() {
     }
     document.getElementById('start-screen').style.display = 'none';
     document.getElementById('start').style.display = 'none';
+    audioManager.play('gameStart');
+    audioManager.playLoop('music');
     world = new World(canvas, keyboard);
 }
 
@@ -35,6 +37,7 @@ function goHome() {
     document.getElementById('home').style.display = 'none';
     document.getElementById('start-screen').style.display = 'block';
     document.getElementById('start').style.display = 'inline-flex';
+    audioManager.stopAllLoops();
     world = null;
 }
 

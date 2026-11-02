@@ -84,6 +84,7 @@ class World {
             }
             if (this.character.isFallingOn(enemy)) {
                 enemy.hit(20);
+                audioManager.play('chickenDead');
                 this.character.jump();
             }
         });
@@ -101,6 +102,7 @@ class World {
             this.bottleBar.setPercentage(this.collectedBottles * 20);
             let bottle = new ThrowableObject(this.character.x + 100, this.character.y + 100);
             this.throwableObjects.push(bottle);
+            audioManager.play('bottleThrow');
         }
     }
 
@@ -117,6 +119,7 @@ class World {
                 return;
             }
             this.character.hit();
+            audioManager.play('damage');
             this.statusBar.setPercentage(this.character.energy);
         });
     }
@@ -129,12 +132,28 @@ class World {
         this.throwableObjects.forEach((bottle, bottleIndex) => {
             let hitEnemy = this.level.enemies.find(enemy => !enemy.isDead() && bottle.isColliding(enemy));
             if (hitEnemy) {
-                hitEnemy.hit(20);
+                this.handleBottleHit(hitEnemy);
                 this.throwableObjects.splice(bottleIndex, 1);
             } else if (bottle.y > 400) {
+                audioManager.play('bottleBreak');
                 this.throwableObjects.splice(bottleIndex, 1);
             }
         });
+    }
+
+    /**
+     * Applies bottle damage and plays the matching break and hurt/death sounds once.
+     * @param {MovableObject} enemy - The enemy the bottle hit.
+     * @returns {void}
+     */
+    handleBottleHit(enemy) {
+        audioManager.play('bottleBreak');
+        enemy.hit(20);
+        if (enemy.isDead()) {
+            audioManager.play('chickenDead');
+        } else {
+            audioManager.play('chickenHurt');
+        }
     }
 
     /**
@@ -147,6 +166,7 @@ class World {
                 this.level.coins.splice(index, 1);
                 this.collectedCoins++;
                 this.coinBar.setPercentage(this.collectedCoins * 20);
+                audioManager.play('coin');
             }
         });
     }
@@ -161,6 +181,7 @@ class World {
                 this.level.bottles.splice(index, 1);
                 this.collectedBottles++;
                 this.bottleBar.setPercentage(this.collectedBottles * 20);
+                audioManager.play('bottleCollect');
             }
         });
     }
@@ -170,17 +191,30 @@ class World {
      * @returns {void}
      */
     checkGameOver() {
+        if (this.gameOver) {
+            return;
+        }
         if (this.character.isDead()) {
-            this.gameOver = true;
-            this.gameOverImage = new Image();
-            this.gameOverImage.src = "images/9_intro_outro_screens/game_over/you lost.png";
+            this.endGame("images/9_intro_outro_screens/game_over/you lost.png", 'gameLose');
         }
         let endboss = this.level.enemies.find(e => e instanceof Endboss);
         if (endboss && endboss.isDead()) {
-            this.gameOver = true;
-            this.gameOverImage = new Image();
-            this.gameOverImage.src = "images/You won, you lost/You won A.png";
+            this.endGame("images/You won, you lost/You won A.png", 'gameWin');
         }
+    }
+
+    /**
+     * Ends the game once: sets the endscreen image, stops loops and plays the end sound.
+     * @param {string} imageSrc - The win or loss image path.
+     * @param {string} soundName - The win or loss sound key.
+     * @returns {void}
+     */
+    endGame(imageSrc, soundName) {
+        this.gameOver = true;
+        this.gameOverImage = new Image();
+        this.gameOverImage.src = imageSrc;
+        audioManager.stopAllLoops();
+        audioManager.play(soundName);
     }
 
     /**
@@ -212,6 +246,8 @@ class World {
         this.character.otherDirection = false;
         this.character.lastHit = 0;
         this.character.lastMoveTime = new Date().getTime();
+        this.character.isRunningSoundPlaying = false;
+        this.character.isSnoreSoundPlaying = false;
     }
 
     /**

@@ -9,6 +9,9 @@ function toggleSound() {
     soundOn = !soundOn;
     localStorage.setItem(SOUND_STORAGE_KEY, soundOn ? 'on' : 'off');
     updateSoundButton();
+    if (typeof audioManager !== 'undefined') {
+        audioManager.applyMute();
+    }
 }
 
 /**

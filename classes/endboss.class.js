@@ -79,9 +79,21 @@ class Endboss extends MovableObject {
                 return;
             }
             if (this.getDistanceToCharacter() < this.alertRange) {
+                this.playApproachSoundOnce();
                 this.moveLeft();
             }
         }, 1000 / 60);
+    }
+
+    /**
+     * Plays the endboss approach sound the first time the character comes into range.
+     * @returns {void}
+     */
+    playApproachSoundOnce() {
+        if (!this.approachSoundPlayed) {
+            this.approachSoundPlayed = true;
+            audioManager.play('endbossApproach');
+        }
     }
 
     /**
