@@ -100,7 +100,9 @@ class World {
             this.lastThrowTime = now;
             this.collectedBottles--;
             this.bottleBar.setPercentage(this.collectedBottles * 20);
-            let bottle = new ThrowableObject(this.character.x + 100, this.character.y + 100);
+            let otherDirection = this.character.otherDirection;
+            let bottleX = otherDirection ? this.character.x - 50 : this.character.x + 100;
+            let bottle = new ThrowableObject(bottleX, this.character.y + 100, otherDirection);
             this.throwableObjects.push(bottle);
             audioManager.play('bottleThrow');
         }
