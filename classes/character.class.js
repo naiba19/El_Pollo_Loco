@@ -115,25 +115,41 @@ class Character extends MovableObject {
      * @returns {void}
      */
     handleMovement() {
-        let moving = false;
-        if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
+        let moving = this.handleWalking();
+        this.handleJumping();
+        this.updateRunningSound(moving);
+    }
+
+    /**
+     * Walks left or right while an arrow key is held and the level bounds allow it.
+     * @returns {boolean} True while a movement key is held.
+     */
+    handleWalking() {
+        let right = this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x;
+        let left = this.world.keyboard.LEFT && this.x > 0;
+        if (right) {
             this.moveRight();
-            this.otherDirection = false;
-            this.recordActivity();
-            moving = true;
         }
-        if (this.world.keyboard.LEFT && this.x > 0) {
+        if (left) {
             this.moveLeft();
-            this.otherDirection = true;
-            this.recordActivity();
-            moving = true;
         }
+        if (right || left) {
+            this.otherDirection = left;
+            this.recordActivity();
+        }
+        return right || left;
+    }
+
+    /**
+     * Jumps when the jump key is pressed and the character is on the ground.
+     * @returns {void}
+     */
+    handleJumping() {
         if (this.world.keyboard.SPACE && !this.isAboveGround()) {
             this.jump();
             this.recordActivity();
             audioManager.play('jump');
         }
-        this.updateRunningSound(moving);
     }
 
     /**

@@ -1,8 +1,6 @@
 class World {
     character = new Character();
     level = level1;
-    canvas;
-    ctx;
     keyboard;
     camera_x = 0;
     statusBar = new StatusBar();
@@ -23,8 +21,7 @@ class World {
      * @param {Keyboard} keyboard - The shared keyboard state.
      */
     constructor(canvas, keyboard) {
-        this.ctx = canvas.getContext("2d");
-        this.canvas = canvas;
+        this.renderer = new WorldRenderer(canvas);
         this.keyboard = keyboard;
         this.draw();
         this.setWorld();
@@ -37,9 +34,7 @@ class World {
      */
     setWorld() {
         this.character.world = this;
-        this.level.enemies.forEach(enemy => {
-            enemy.world = this;
-        });
+        this.level.enemies.forEach(enemy => enemy.world = this);
     }
 
     /**
@@ -47,16 +42,22 @@ class World {
      * @returns {void}
      */
     run() {
+        this.startLoop(() => this.runGameLogicChecks(), 200);
+        this.startLoop(() => this.checkJumpKills(), 1000 / 60);
+    }
+
+    /**
+     * Runs a check repeatedly while the game is not over.
+     * @param {Function} check - The check to run on each tick.
+     * @param {number} interval - The tick interval in milliseconds.
+     * @returns {void}
+     */
+    startLoop(check, interval) {
         setInterval(() => {
             if (!this.gameOver) {
-                this.runGameLogicChecks();
+                check();
             }
-        }, 200);
-        setInterval(() => {
-            if (!this.gameOver) {
-                this.checkJumpKills();
-            }
-        }, 1000 / 60);
+        }, interval);
     }
 
     /**
@@ -95,17 +96,34 @@ class World {
      */
     checkThrowableObjects() {
         let now = new Date().getTime();
-        if (this.keyboard.D && this.collectedBottles > 0 && now - this.lastThrowTime > this.throwCooldown) {
-            this.lastThrowTime = now;
-            this.collectedBottles--;
-            this.bottleBar.setPercentage(this.collectedBottles * 20);
-            let otherDirection = this.character.otherDirection;
-            let bottleX = otherDirection ? this.character.x - 50 : this.character.x + 100;
-            let bottle = new ThrowableObject(bottleX, this.character.y + 100, otherDirection);
-            this.throwableObjects.push(bottle);
-            this.character.recordActivity();
-            audioManager.play('bottleThrow');
+        if (this.canThrowBottle(now)) {
+            this.throwBottle(now);
         }
+    }
+
+    /**
+     * Checks whether a bottle can be thrown at the given time.
+     * @param {number} now - The current timestamp in milliseconds.
+     * @returns {boolean} True when the throw key is held, a bottle is available and the cooldown passed.
+     */
+    canThrowBottle(now) {
+        return this.keyboard.D && this.collectedBottles > 0 && now - this.lastThrowTime > this.throwCooldown;
+    }
+
+    /**
+     * Throws a bottle in the character's facing direction and updates the bottle bar.
+     * @param {number} now - The current timestamp in milliseconds.
+     * @returns {void}
+     */
+    throwBottle(now) {
+        this.lastThrowTime = now;
+        this.collectedBottles--;
+        this.bottleBar.setPercentage(this.collectedBottles * 20);
+        let otherDirection = this.character.otherDirection;
+        let bottleX = otherDirection ? this.character.x - 50 : this.character.x + 100;
+        this.throwableObjects.push(new ThrowableObject(bottleX, this.character.y + 100, otherDirection));
+        this.character.recordActivity();
+        audioManager.play('bottleThrow');
     }
 
     /**
@@ -166,14 +184,7 @@ class World {
      * @returns {void}
      */
     checkCoinCollisions() {
-        this.level.coins.forEach((coin, index) => {
-            if (this.character.isColliding(coin)) {
-                this.level.coins.splice(index, 1);
-                this.collectedCoins++;
-                this.coinBar.setPercentage(this.collectedCoins * 20);
-                audioManager.play('coin');
-            }
-        });
+        this.checkCollectibles(this.level.coins, 'collectedCoins', this.coinBar, 'coin');
     }
 
     /**
@@ -181,12 +192,24 @@ class World {
      * @returns {void}
      */
     checkBottleCollisions() {
-        this.level.bottles.forEach((bottle, index) => {
-            if (this.character.isColliding(bottle)) {
-                this.level.bottles.splice(index, 1);
-                this.collectedBottles++;
-                this.bottleBar.setPercentage(this.collectedBottles * 20);
-                audioManager.play('bottleCollect');
+        this.checkCollectibles(this.level.bottles, 'collectedBottles', this.bottleBar, 'bottleCollect');
+    }
+
+    /**
+     * Collects touched items of one kind, counts them, updates the bar and plays a sound.
+     * @param {DrawableObject[]} items - The collectible items to check.
+     * @param {string} counterKey - The world field counting the collected items.
+     * @param {StatusBarBase} bar - The status bar to update.
+     * @param {string} soundName - The collection sound key.
+     * @returns {void}
+     */
+    checkCollectibles(items, counterKey, bar, soundName) {
+        items.forEach((item, index) => {
+            if (this.character.isColliding(item)) {
+                items.splice(index, 1);
+                this[counterKey]++;
+                bar.setPercentage(this[counterKey] * 20);
+                audioManager.play(soundName);
             }
         });
     }
@@ -202,10 +225,18 @@ class World {
         if (this.character.isDead()) {
             this.endGame("images/9_intro_outro_screens/game_over/you lost.png", 'gameLose');
         }
-        let endboss = this.level.enemies.find(e => e instanceof Endboss);
+        let endboss = this.getEndboss();
         if (endboss && endboss.isDead()) {
             this.endGame("images/You won, you lost/You won A.png", 'gameWin');
         }
+    }
+
+    /**
+     * Returns the endboss of the current level.
+     * @returns {Endboss|undefined} The endboss, or undefined when the level has none.
+     */
+    getEndboss() {
+        return this.level.enemies.find(e => e instanceof Endboss);
     }
 
     /**
@@ -243,17 +274,19 @@ class World {
      * @returns {void}
      */
     resetCharacter() {
-        this.character.energy = 100;
-        this.character.x = 120;
-        this.character.y = 80;
-        this.character.speedY = 0;
-        this.character.currentImage = 0;
-        this.character.deathAnimationStarted = false;
-        this.character.otherDirection = false;
-        this.character.lastHit = 0;
-        this.character.lastMoveTime = new Date().getTime();
-        this.character.isRunningSoundPlaying = false;
-        this.character.isSnoreSoundPlaying = false;
+        Object.assign(this.character, {
+            energy: 100,
+            x: 120,
+            y: 80,
+            speedY: 0,
+            currentImage: 0,
+            deathAnimationStarted: false,
+            otherDirection: false,
+            lastHit: 0,
+            lastMoveTime: new Date().getTime(),
+            isRunningSoundPlaying: false,
+            isSnoreSoundPlaying: false
+        });
     }
 
     /**
@@ -272,168 +305,11 @@ class World {
     }
 
     /**
-     * Renders one frame: background, status bars, gameplay objects and endscreen.
+     * Renders one frame and schedules the next animation frame.
      * @returns {void}
      */
     draw() {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.drawBackgroundLayer();
-        this.drawStatusBars();
-        this.drawGameplayLayer();
-        this.drawEndscreen();
-        this.scheduleNextFrame();
-    }
-
-    /**
-     * Draws the scrolling background scenery and clouds behind everything else.
-     * @returns {void}
-     */
-    drawBackgroundLayer() {
-        this.ctx.translate(this.camera_x, 0);
-        this.addObjectsToMap(this.level.backgroundObjects);
-        this.addObjectsToMap(this.level.clouds);
-        this.ctx.translate(-this.camera_x, 0);
-    }
-
-    /**
-     * Draws the fixed status bars (health, bottles, coins) on top of the world.
-     * @returns {void}
-     */
-    drawStatusBars() {
-        this.addToMap(this.statusBar);
-        this.addToMap(this.bottleBar);
-        this.addToMap(this.coinBar);
-        if (this.isEndbossVisible()) {
-            this.addToMap(this.endbossBar);
-        }
-    }
-
-    /**
-     * Checks whether the endboss is currently visible on the screen.
-     * @returns {boolean} True when any part of the endboss is within the viewport.
-     */
-    isEndbossVisible() {
-        let endboss = this.level.enemies.find(e => e instanceof Endboss);
-        if (!endboss || endboss.isDead()) {
-            return false;
-        }
-        let screenLeft = -this.camera_x;
-        let screenRight = screenLeft + this.canvas.width;
-        return endboss.x + endboss.width > screenLeft && endboss.x < screenRight;
-    }
-
-    /**
-     * Draws the character, enemies and collectibles in front of the clouds.
-     * @returns {void}
-     */
-    drawGameplayLayer() {
-        this.ctx.translate(this.camera_x, 0);
-        this.addToMap(this.character);
-        this.drawSleepEffect();
-        this.addObjectsToMap(this.level.enemies);
-        this.addObjectsToMap(this.level.coins);
-        this.addObjectsToMap(this.level.bottles);
-        this.addObjectsToMap(this.throwableObjects);
-        this.ctx.translate(-this.camera_x, 0);
-    }
-
-    /**
-     * Draws a floating "Zzz" effect above the character while he is sleeping.
-     * @returns {void}
-     */
-    drawSleepEffect() {
-        if (!this.character.isSleeping()) {
-            return;
-        }
-        let c = this.character;
-        let x = c.otherDirection ? c.x + 20 : c.x + c.width - 20;
-        let y = c.y + 30;
-        this.ctx.save();
-        this.ctx.font = "700 22px Poppins, Arial, sans-serif";
-        this.ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
-        this.ctx.strokeStyle = "rgba(122, 59, 18, 0.8)";
-        this.ctx.lineWidth = 3;
-        this.ctx.strokeText("Z", x, y);
-        this.ctx.fillText("Z", x, y);
-        this.ctx.font = "700 16px Poppins, Arial, sans-serif";
-        this.ctx.strokeText("z", x + 14, y - 14);
-        this.ctx.fillText("z", x + 14, y - 14);
-        this.ctx.font = "700 12px Poppins, Arial, sans-serif";
-        this.ctx.strokeText("z", x + 26, y - 26);
-        this.ctx.fillText("z", x + 26, y - 26);
-        this.ctx.restore();
-    }
-
-    /**
-     * Draws the win/loss image and reveals the restart and home buttons.
-     * @returns {void}
-     */
-    drawEndscreen() {
-        if (this.gameOver && this.gameOverImage) {
-            this.ctx.drawImage(this.gameOverImage, 0, 0, this.canvas.width, this.canvas.height);
-            document.getElementById('restart').style.display = 'inline-block';
-            document.getElementById('home').style.display = 'inline-block';
-        }
-    }
-
-    /**
-     * Requests the next animation frame to keep the render loop running.
-     * @returns {void}
-     */
-    scheduleNextFrame() {
-        let self = this;
-        requestAnimationFrame(function () {
-            self.draw();
-        });
-    }
-
-    /**
-     * Draws a list of objects to the canvas.
-     * @param {DrawableObject[]} objects - The objects to draw.
-     * @returns {void}
-     */
-    addObjectsToMap(objects) {
-        objects.forEach(o => {
-            this.addToMap(o);
-        });
-    }
-
-    /**
-     * Draws a single object, flipping it horizontally when it faces left.
-     * @param {DrawableObject} mo - The object to draw.
-     * @returns {void}
-     */
-    addToMap(mo) {
-        if (mo.otherDirection) {
-            this.flipImage(mo);
-        }
-
-        mo.draw(this.ctx);
-
-        if (mo.otherDirection) {
-            this.flipImageBack(mo);
-        }
-    }
-
-    /**
-     * Mirrors the canvas context so the object is drawn facing left.
-     * @param {DrawableObject} mo - The object to flip.
-     * @returns {void}
-     */
-    flipImage(mo) {
-        this.ctx.save();
-        this.ctx.translate(mo.width, 0);
-        this.ctx.scale(-1, 1);
-        mo.x = mo.x * -1;
-    }
-
-    /**
-     * Restores the canvas context after drawing a flipped object.
-     * @param {DrawableObject} mo - The object to restore.
-     * @returns {void}
-     */
-    flipImageBack(mo) {
-        mo.x = mo.x * -1;
-        this.ctx.restore();
+        this.renderer.render(this);
+        requestAnimationFrame(() => this.draw());
     }
 }
