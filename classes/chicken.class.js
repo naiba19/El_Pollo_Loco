@@ -29,7 +29,6 @@ class Chicken extends MovableObject {
         this.animate();
     }
 
-
     /**
      * Starts the movement and animation loops for the chicken.
      * @returns {void}
