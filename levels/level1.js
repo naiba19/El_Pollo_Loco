@@ -16,7 +16,10 @@ function createLevel1() {
         new Endboss()
     ],
     [
-        new Cloud()
+        new Cloud(-200, 30),
+        new Cloud(500, 80),
+        new Cloud(1200, 40),
+        new Cloud(1900, 90),
     ],
     [
         new BackgroundObject("images/5_background/layers/air.png", -719),

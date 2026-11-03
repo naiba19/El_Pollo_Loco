@@ -235,6 +235,7 @@ class World {
         this.resetProgress();
         this.level = createLevel1();
         this.setWorld();
+        audioManager.playLoop('music');
     }
 
     /**
