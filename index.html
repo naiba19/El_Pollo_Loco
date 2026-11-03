@@ -50,7 +50,7 @@
             <button id="sound-btn" class="ui-btn corner-btn top-left" onclick="toggleSound()" aria-label="Sound">&#128266;</button>
             <button id="instructions-btn" class="ui-btn corner-btn top-right" onclick="openInstructions()" aria-label="How to Play">&#9000;</button>
             <button id="start" class="ui-btn play-btn" onclick="startGame()" aria-label="Play">&#9654;</button>
-            <a id="impressum-btn" class="ui-btn corner-btn bottom-left" href="impressum.html" aria-label="Impressum">&#8505;</a>
+            <button id="impressum-btn" class="ui-btn corner-btn bottom-left" onclick="openImpressum()" aria-label="Impressum">&#8505;</button>
             <button id="fullscreen" class="ui-btn corner-btn bottom-right" onclick="fullscreen()" aria-label="Fullscreen">&#x26F6;</button>
         </div>
     </div>
@@ -98,6 +98,44 @@
                 <li>The <strong>Endboss</strong> is tougher &ndash; hit him <strong>5 times</strong> with bottles.</li>
                 <li>Touching an enemy costs health. If the health bar is empty, the game is over.</li>
             </ul>
+        </div>
+    </div>
+    <div id="impressum-overlay" onclick="closeImpressum()">
+        <div class="impressum-dialog" onclick="event.stopPropagation()" role="dialog" aria-modal="true" aria-labelledby="impressum-title">
+            <button class="impressum-close" onclick="closeImpressum()" aria-label="Close">&times;</button>
+            <h1 id="impressum-title">Legal Notice (Impressum)</h1>
+
+            <h2>Information according to Section 5 DDG</h2>
+            <p>
+                <strong>Max Mustermann</strong><br>
+                Musterstra&szlig;e 1<br>
+                12345 Musterstadt<br>
+                Germany
+            </p>
+
+            <h2>Contact</h2>
+            <p>
+                Phone: +49 (0) 123 456789<br>
+                Email: <a href="mailto:max@mustermann.example">max@mustermann.example</a>
+            </p>
+
+            <h2>About This Project</h2>
+            <p>
+                <strong>El Pollo Loco</strong> is an educational project developed as part of the training program at Developer Akademie GmbH.
+            </p>
+            <p>
+                The project is managed and developed by Naiba Radshabov for educational and practice purposes.
+            </p>
+            <p>
+                The project tasks and related content have been provided by Developer Akademie GmbH.
+            </p>
+
+            <h2>Liability for Content</h2>
+            <p>
+                The content of this educational project has been created with the greatest possible care. However, no guarantee is given regarding the completeness, accuracy or timeliness of the information provided.
+            </p>
+
+            <a class="back-link" href="#" onclick="closeImpressum(); return false;">&larr; Back to the Game</a>
         </div>
     </div>
 </body>

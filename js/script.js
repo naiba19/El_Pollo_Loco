@@ -91,6 +91,33 @@ function closeInstructions() {
     document.getElementById('instructions-overlay').classList.remove('open');
 }
 
+/**
+ * Opens the Impressum modal overlay and locks background scrolling.
+ * @returns {void}
+ */
+function openImpressum() {
+    document.getElementById('impressum-overlay').classList.add('open');
+    lockBackgroundScroll();
+    window.addEventListener('scroll', lockBackgroundScroll);
+}
+
+/**
+ * Closes the Impressum modal overlay and releases the scroll lock.
+ * @returns {void}
+ */
+function closeImpressum() {
+    document.getElementById('impressum-overlay').classList.remove('open');
+    window.removeEventListener('scroll', lockBackgroundScroll);
+}
+
+/**
+ * Keeps the page scrolled to the top while a modal locks the background.
+ * @returns {void}
+ */
+function lockBackgroundScroll() {
+    window.scrollTo(0, 0);
+}
+
 
 const KEY_MAP = {
     ArrowRight: 'RIGHT',
@@ -117,6 +144,12 @@ function setKey(event, isPressed) {
 
 window.addEventListener("keydown", (e) => setKey(e, true));
 window.addEventListener("keyup", (e) => setKey(e, false));
+
+window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+        closeImpressum();
+    }
+});
 
 /**
  * Adjusts the canvas height to fit short landscape screens.
