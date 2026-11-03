@@ -41,6 +41,8 @@ canvas {
     box-sizing: border-box;
     width: 720px;
     height: 480px;
+    max-width: 100%;
+    aspect-ratio: 720 / 480;
 }
 
 button,
@@ -54,6 +56,9 @@ a[href],
     position: relative;
     width: 720px;
     max-width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #canvas-container:fullscreen {
@@ -75,10 +80,19 @@ a[href],
 }
 
 #endscreen-buttons {
+    position: absolute;
+    bottom: 24px;
+    left: 0;
+    width: 100%;
     display: flex;
     gap: 16px;
     justify-content: center;
-    margin: 0 0 16px;
+    z-index: 20;
+    pointer-events: none;
+}
+
+#endscreen-buttons button {
+    pointer-events: auto;
 }
 
 #restart,
@@ -374,6 +388,29 @@ a[href],
     }
 }
 
+@media only screen and (pointer: coarse) and (max-height: 480px) {
+    body {
+        justify-content: flex-start;
+        padding-top: 8px;
+    }
+
+    #touch-controls {
+        position: fixed;
+        bottom: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: auto;
+        margin-top: 0;
+        z-index: 15;
+    }
+
+    .touch-btn {
+        width: 56px;
+        height: 56px;
+        font-size: 24px;
+    }
+}
+
 .impressum-dialog {
     position: relative;
     max-width: 560px;
@@ -475,18 +512,10 @@ a[href],
         margin-bottom: 12px;
     }
 
-    canvas {
-        width: 100%;
-    }
-
     #restart,
     #home {
         font-size: 16px;
         padding: 10px 24px;
-    }
-
-    #endscreen-buttons {
-        margin-bottom: 10px;
     }
 
     .restart-icon {
@@ -496,22 +525,13 @@ a[href],
 
 @media only screen and (max-height: 480px) {
     h1 {
-        font-size: 48px;
-        margin-bottom: 8px;
-    }
-
-    canvas {
-        height: 100vh;
+        display: none;
     }
 
     #restart,
     #home {
         font-size: 14px;
         padding: 8px 20px;
-    }
-
-    #endscreen-buttons {
-        margin-bottom: 6px;
     }
 
     .restart-icon {

@@ -152,19 +152,40 @@ window.addEventListener("keydown", (e) => {
 });
 
 /**
- * Adjusts the canvas height to fit short landscape screens.
+ * Scales the canvas to fit the viewport while preserving its 720:480 aspect ratio.
  * @returns {void}
  */
 function checkOrientation() {
-    if (window.matchMedia("(orientation: landscape)").matches) {
-        if (window.innerHeight < 480) {
-            let newHeight = window.innerHeight;
-            document.getElementById('canvas').style.height = `${newHeight}px`;
-        }
+    let container = document.getElementById('canvas-container');
+    let canvas = document.getElementById('canvas');
+    if (!container || !canvas) {
+        return;
     }
-    else {
-        document.getElementById('canvas').style.height = `100%`;
+    canvas.style.width = '';
+    canvas.style.height = '';
+    let availableWidth = Math.min(container.parentElement.clientWidth, 720);
+    let reservedHeight = window.innerHeight - container.getBoundingClientRect().top - getTouchControlsHeight() - 16;
+    let scale = Math.min(availableWidth / 720, reservedHeight / 480, 1);
+    if (scale > 0 && scale < 1) {
+        canvas.style.width = `${Math.floor(720 * scale)}px`;
+        canvas.style.height = `${Math.floor(480 * scale)}px`;
     }
+}
+
+/**
+ * Returns the height of the touch controls bar, or 0 when it is hidden or overlaid.
+ * @returns {number} The touch controls height in pixels.
+ */
+function getTouchControlsHeight() {
+    let controls = document.getElementById('touch-controls');
+    if (!controls || getComputedStyle(controls).display === 'none') {
+        return 0;
+    }
+    let position = getComputedStyle(controls).position;
+    if (position === 'absolute' || position === 'fixed') {
+        return 0;
+    }
+    return controls.offsetHeight + 12;
 }
 
 window.addEventListener("resize", checkOrientation);

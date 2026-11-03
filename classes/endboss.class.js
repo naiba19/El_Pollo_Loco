@@ -55,6 +55,9 @@ class Endboss extends MovableObject {
         this.loadImages(this.IMAGES_ATTACK);
         this.x = 2100;
         this.speed = 0.5;
+        this.baseSpeed = 0.5;
+        this.enragedSpeed = 1.4;
+        this.lungeSpeed = 2.2;
         this.alertRange = 400;
         this.attackRange = 220;
         this.animate();
@@ -78,11 +81,36 @@ class Endboss extends MovableObject {
             if (this.isDead() || this.isHurt()) {
                 return;
             }
-            if (this.getDistanceToCharacter() < this.alertRange) {
+            this.updateAggression();
+            let distance = this.getDistanceToCharacter();
+            if (distance < this.alertRange) {
                 this.playApproachSoundOnce();
-                this.moveLeft();
+                this.chaseCharacter();
             }
         }, 1000 / 60);
+    }
+
+    /**
+     * Moves the endboss toward the character, lunging faster when in attack range.
+     * @returns {void}
+     */
+    chaseCharacter() {
+        let characterX = this.world.character.x;
+        let distance = this.getDistanceToCharacter();
+        let speed = distance < this.attackRange ? Math.max(this.speed, this.lungeSpeed) : this.speed;
+        if (characterX < this.x) {
+            this.x -= speed;
+        } else if (characterX > this.x) {
+            this.x += speed;
+        }
+    }
+
+    /**
+     * Increases the endboss speed as its health drops, making it more aggressive.
+     * @returns {void}
+     */
+    updateAggression() {
+        this.speed = this.energy <= 60 ? this.enragedSpeed : this.baseSpeed;
     }
 
     /**

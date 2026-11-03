@@ -8,6 +8,7 @@ class World {
     statusBar = new StatusBar();
     bottleBar = new BottleBar();
     coinBar = new CoinBar();
+    endbossBar = new EndbossBar();
     throwableObjects = [];
     collectedBottles = 0;
     collectedCoins = 0;
@@ -150,6 +151,9 @@ class World {
     handleBottleHit(enemy) {
         audioManager.play('bottleBreak');
         enemy.hit(20);
+        if (enemy instanceof Endboss) {
+            this.endbossBar.setPercentage(enemy.energy);
+        }
         if (enemy.isDead()) {
             audioManager.play('chickenDead');
         } else {
@@ -262,6 +266,7 @@ class World {
         this.statusBar.setPercentage(100);
         this.bottleBar.setPercentage(0);
         this.coinBar.setPercentage(0);
+        this.endbossBar.setPercentage(100);
         this.camera_x = 0;
     }
 
@@ -297,6 +302,23 @@ class World {
         this.addToMap(this.statusBar);
         this.addToMap(this.bottleBar);
         this.addToMap(this.coinBar);
+        if (this.isEndbossVisible()) {
+            this.addToMap(this.endbossBar);
+        }
+    }
+
+    /**
+     * Checks whether the endboss is currently visible on the screen.
+     * @returns {boolean} True when any part of the endboss is within the viewport.
+     */
+    isEndbossVisible() {
+        let endboss = this.level.enemies.find(e => e instanceof Endboss);
+        if (!endboss || endboss.isDead()) {
+            return false;
+        }
+        let screenLeft = -this.camera_x;
+        let screenRight = screenLeft + this.canvas.width;
+        return endboss.x + endboss.width > screenLeft && endboss.x < screenRight;
     }
 
     /**
