@@ -14,13 +14,16 @@ class Chicken extends MovableObject {
 
     /**
      * Creates a normal chicken with a random position and speed.
+     * @param {{min: number, max: number}} [spawnRange] - Optional horizontal spawn range.
      */
-    constructor() {
+    constructor(spawnRange) {
         super().loadImage("images/3_enemies_chicken/chicken_normal/1_walk/1_w.png");
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages([this.IMAGE_DEAD]);
 
-        this.x = 400 + Math.random() * 500;
+        let min = spawnRange ? spawnRange.min : 720;
+        let max = spawnRange ? spawnRange.max : 2200;
+        this.x = min + Math.random() * (max - min);
         this.speed = 0.15 + Math.random() * 0.25;
 
         this.animate();

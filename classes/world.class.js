@@ -37,9 +37,7 @@ class World {
     setWorld() {
         this.character.world = this;
         this.level.enemies.forEach(enemy => {
-            if (enemy instanceof Endboss) {
-                enemy.world = this;
-            }
+            enemy.world = this;
         });
     }
 
@@ -104,6 +102,7 @@ class World {
             let bottleX = otherDirection ? this.character.x - 50 : this.character.x + 100;
             let bottle = new ThrowableObject(bottleX, this.character.y + 100, otherDirection);
             this.throwableObjects.push(bottle);
+            this.character.recordActivity();
             audioManager.play('bottleThrow');
         }
     }
@@ -307,11 +306,39 @@ class World {
     drawGameplayLayer() {
         this.ctx.translate(this.camera_x, 0);
         this.addToMap(this.character);
+        this.drawSleepEffect();
         this.addObjectsToMap(this.level.enemies);
         this.addObjectsToMap(this.level.coins);
         this.addObjectsToMap(this.level.bottles);
         this.addObjectsToMap(this.throwableObjects);
         this.ctx.translate(-this.camera_x, 0);
+    }
+
+    /**
+     * Draws a floating "Zzz" effect above the character while he is sleeping.
+     * @returns {void}
+     */
+    drawSleepEffect() {
+        if (!this.character.isSleeping()) {
+            return;
+        }
+        let c = this.character;
+        let x = c.otherDirection ? c.x + 20 : c.x + c.width - 20;
+        let y = c.y + 30;
+        this.ctx.save();
+        this.ctx.font = "700 22px Poppins, Arial, sans-serif";
+        this.ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+        this.ctx.strokeStyle = "rgba(122, 59, 18, 0.8)";
+        this.ctx.lineWidth = 3;
+        this.ctx.strokeText("Z", x, y);
+        this.ctx.fillText("Z", x, y);
+        this.ctx.font = "700 16px Poppins, Arial, sans-serif";
+        this.ctx.strokeText("z", x + 14, y - 14);
+        this.ctx.fillText("z", x + 14, y - 14);
+        this.ctx.font = "700 12px Poppins, Arial, sans-serif";
+        this.ctx.strokeText("z", x + 26, y - 26);
+        this.ctx.fillText("z", x + 26, y - 26);
+        this.ctx.restore();
     }
 
     /**

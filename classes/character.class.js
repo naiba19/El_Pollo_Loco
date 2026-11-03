@@ -202,18 +202,31 @@ class Character extends MovableObject {
     }
 
     /**
-     * Plays the idle animation, switching to the sleep animation after 15 seconds.
+     * Plays the idle animation, switching to the sleep animation after about 6.5 seconds.
      * @returns {void}
      */
     playIdleAnimation() {
-        let idleTime = new Date().getTime() - this.lastMoveTime;
-        if (idleTime > 15000) {
+        if (this.isSleeping()) {
             this.playAnimation(this.IMAGES_SLEEP);
             this.updateSnoreSound(true);
         } else {
             this.playAnimation(this.IMAGES_IDLE);
             this.updateSnoreSound(false);
         }
+    }
+
+    /**
+     * Checks whether the character is currently in the sleeping state.
+     * @returns {boolean} True while the sleep animation should play.
+     */
+    isSleeping() {
+        if (this.isDead() || this.isHurt() || this.isAboveGround()) {
+            return false;
+        }
+        if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
+            return false;
+        }
+        return (new Date().getTime() - this.lastMoveTime) > 6500;
     }
 
     /**

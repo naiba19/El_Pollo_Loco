@@ -5,12 +5,14 @@
 function createLevel1() {
     return new Level(
     [
-        new Chicken(),
-        new Chicken(),
-        new Chicken(),
-        new SmallChicken(),
-        new SmallChicken(),
-        new SmallChicken(),
+        new Chicken({ min: 720, max: 900 }),
+        new Chicken({ min: 1000, max: 1180 }),
+        new Chicken({ min: 1280, max: 1460 }),
+        new Chicken({ min: 1500, max: 1620 }),
+        new SmallChicken({ min: 800, max: 980 }),
+        new SmallChicken({ min: 1080, max: 1260 }),
+        new SmallChicken({ min: 1360, max: 1540 }),
+        new SmallChicken({ min: 1560, max: 1640 }),
         new Endboss()
     ],
     [
@@ -53,14 +55,18 @@ function createLevel1() {
         new Coin(2100, 250),
     ],
     [
-        new Bottle(350, 350),
+        new Bottle(300, 350),
+        new Bottle(450, 350),
         new Bottle(600, 350),
-        new Bottle(850, 350),
-        new Bottle(1100, 350),
+        new Bottle(750, 350),
+        new Bottle(900, 350),
+        new Bottle(1050, 350),
+        new Bottle(1200, 350),
         new Bottle(1350, 350),
-        new Bottle(1600, 350),
-        new Bottle(1850, 350),
-        new Bottle(2100, 350),
+        new Bottle(1500, 350),
+        new Bottle(1650, 350),
+        new Bottle(1800, 350),
+        new Bottle(1950, 350),
     ]
     );
 }

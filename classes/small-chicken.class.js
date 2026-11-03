@@ -14,13 +14,16 @@ class SmallChicken extends MovableObject {
 
     /**
      * Creates a small chicken with a random position and speed.
+     * @param {{min: number, max: number}} [spawnRange] - Optional horizontal spawn range.
      */
-    constructor() {
+    constructor(spawnRange) {
         super().loadImage("images/3_enemies_chicken/chicken_small/1_walk/1_w.png");
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages([this.IMAGE_DEAD]);
 
-        this.x = 600 + Math.random() * 1500;
+        let min = spawnRange ? spawnRange.min : 720;
+        let max = spawnRange ? spawnRange.max : 2100;
+        this.x = min + Math.random() * (max - min);
         this.speed = 0.15 + Math.random() * 0.35;
 
         this.animate();
