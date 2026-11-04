@@ -249,6 +249,7 @@ class World {
         this.gameOver = true;
         this.gameOverImage = new Image();
         this.gameOverImage.src = imageSrc;
+        document.getElementById('touch-controls').style.display = 'none';
         audioManager.stopAllLoops();
         audioManager.play(soundName);
     }
@@ -260,6 +261,7 @@ class World {
     restart() {
         document.getElementById('restart').style.display = 'none';
         document.getElementById('home').style.display = 'none';
+        document.getElementById('touch-controls').style.display = '';
         this.gameOver = false;
         this.gameOverImage = null;
         this.resetCharacter();
@@ -309,6 +311,9 @@ class World {
      * @returns {void}
      */
     draw() {
+        if (this.stopped) {
+            return;
+        }
         this.renderer.render(this);
         requestAnimationFrame(() => this.draw());
     }

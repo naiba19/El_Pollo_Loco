@@ -33,8 +33,12 @@ function startGame() {
  * @returns {void}
  */
 function goHome() {
+    if (world) {
+        world.stopped = true;
+    }
     document.getElementById('restart').style.display = 'none';
     document.getElementById('home').style.display = 'none';
+    document.getElementById('touch-controls').style.display = '';
     document.getElementById('start-screen').style.display = 'block';
     document.getElementById('start').style.display = 'inline-flex';
     audioManager.stopAllLoops();
