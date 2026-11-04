@@ -382,7 +382,8 @@ a[href],
     -webkit-touch-callout: none;
 }
 
-@media only screen and (pointer: coarse), only screen and (max-width: 720px) {
+@media only screen and (pointer: coarse),
+only screen and (max-width: 720px) {
     #touch-controls {
         display: flex;
     }
