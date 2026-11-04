@@ -3,11 +3,61 @@ let world;
 let keyboard = new Keyboard();
 
 /**
+ * Detects if the device actually supports touch input (not a DevTools simulation).
+ * Uses multiple heuristics since DevTools can simulate media queries perfectly.
+ * @returns {boolean} True if device has actual touch capability.
+ */
+function isTouchDevice() {
+    // Check 1: navigator.maxTouchPoints (most reliable for actual devices)
+    // DevTools in responsive mode often reports 0
+    if (navigator.maxTouchPoints !== undefined && navigator.maxTouchPoints > 0) {
+        return true;
+    }
+
+    // Check 2: ontouchstart (older but still valid)
+    if (window.ontouchstart !== undefined) {
+        return true;
+    }
+
+    // Check 3: Check if touch events were actually fired on interaction
+    // (This helps distinguish real touch from DevTools simulation)
+    if (window.matchMedia('(pointer: fine)').matches && navigator.maxTouchPoints === 0) {
+        return false; // Desktop with fine pointer and no touch points = not a touch device
+    }
+
+    // If media queries match but no actual touch capability detected, assume desktop
+    if (window.matchMedia('(hover: none) and (pointer: coarse)').matches) {
+        // Additional check: if maxTouchPoints is explicitly 0, it's likely a desktop in responsive mode
+        if (navigator.maxTouchPoints === 0) {
+            return false;
+        }
+        return true;
+    }
+
+    return false;
+}
+
+/**
  * Grabs the canvas element. Called once before the game starts.
  * @returns {void}
  */
 function init() {
     canvas = document.getElementById("canvas");
+}
+
+/**
+ * Shows or hides touch controls based on actual device capabilities.
+ * @returns {void}
+ */
+function updateTouchControlsVisibility() {
+    const touchControls = document.getElementById('touch-controls');
+    if (!touchControls) return;
+
+    if (isTouchDevice()) {
+        touchControls.style.display = '';  // Use CSS default (flex on appropriate media queries)
+    } else {
+        touchControls.style.display = 'none';  // Hide on non-touch devices
+    }
 }
 
 /**
@@ -38,7 +88,7 @@ function goHome() {
     }
     document.getElementById('restart').style.display = 'none';
     document.getElementById('home').style.display = 'none';
-    document.getElementById('touch-controls').style.display = '';
+    updateTouchControlsVisibility();
     document.getElementById('start-screen').style.display = 'block';
     document.getElementById('start').style.display = 'inline-flex';
     audioManager.stopAllLoops();
@@ -77,7 +127,10 @@ function initTouchControls() {
     bindTouchButton('btn-throw', 'D');
 }
 
-document.addEventListener('DOMContentLoaded', initTouchControls);
+document.addEventListener('DOMContentLoaded', () => {
+    initTouchControls();
+    updateTouchControlsVisibility();
+});
 
 /**
  * Opens the instructions dialog.

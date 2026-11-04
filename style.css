@@ -382,20 +382,16 @@ a[href],
     -webkit-touch-callout: none;
 }
 
-@media only screen and (pointer: coarse),
-only screen and (max-width: 720px) {
-    #touch-controls {
-        display: flex;
-    }
-}
-
-@media only screen and (pointer: coarse) and (max-height: 480px) {
+/* Touch controls visibility is controlled by JavaScript (isTouchDevice function) */
+/* Media queries below only adjust layout on actual touch devices */
+@media (hover: none) and (pointer: coarse) and (max-height: 480px) {
     body {
         justify-content: flex-start;
         padding-top: 8px;
     }
 
-    #touch-controls {
+    #touch-controls:not([style*="display: none"]) {
+        display: flex;
         position: fixed;
         bottom: 8px;
         left: 50%;
@@ -481,7 +477,7 @@ only screen and (max-width: 720px) {
     display: none;
 }
 
-@media only screen and (orientation: portrait) and (max-width: 720px) and (pointer: coarse) {
+@media (hover: none) and (pointer: coarse) and (orientation: portrait) and (max-width: 720px) {
     #rotate-overlay {
         display: flex;
         flex-direction: column;
